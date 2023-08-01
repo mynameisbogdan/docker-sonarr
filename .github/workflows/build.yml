@@ -119,6 +119,7 @@ jobs:
           ./build.sh --backend --frontend --lint --packages -f net6.0 -r linux-musl-x64
           rm -rf _artifacts/linux-musl-x64/net6.0/Sonarr/Sonarr.Update
           find . -name "Sonarr" -exec chmod a+x {} \;
+          find . -name "ffprobe" -exec chmod a+x {} \;
 
       - name: Docker meta
         id: docker_meta
