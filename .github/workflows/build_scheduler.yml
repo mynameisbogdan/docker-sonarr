@@ -1,0 +1,71 @@
+name: 'Build Docker Image Scheduler'
+
+on:
+  schedule:
+    - cron:  '5 20 * * *'
+  workflow_dispatch:
+    
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: build-trigger-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-scheduler:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.6
+        with:
+          fetch-depth: '0'
+
+      - name: Build Scheduler
+        if: github.repository_owner == 'mynameisbogdan' && github.ref == 'refs/heads/develop'
+        run: |
+          if [ -n "${{ secrets.PAUSE_EXTERNAL_TRIGGER_SONARR_DEVELOP }}" ]; then
+            echo "**** Github secret PAUSE_EXTERNAL_TRIGGER_SONARR_DEVELOP is set; skipping trigger. ****"
+            echo "Github secret \`PAUSE_EXTERNAL_TRIGGER_SONARR_DEVELOP\` is set; skipping trigger." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          echo "**** External trigger running off of develop branch. To disable this trigger, set a Github secret named \"PAUSE_EXTERNAL_TRIGGER_SONARR_DEVELOP\". ****"
+          echo "**** Retrieving external version ****"
+          EXT_RELEASE=$(curl -sL "https://services.sonarr.tv/v1/releases" | jq -r 'first(.[] | select(.branch=="develop") | .version)')
+          if [ -z "${EXT_RELEASE}" ] || [ "${EXT_RELEASE}" == "null" ]; then
+            echo "**** Can't retrieve external version, exiting ****"
+            echo "Can't retrieve external version, exiting" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          EXT_RELEASE=$(echo ${EXT_RELEASE} | sed 's/[~,%@+;:/]//g')
+          echo "**** External version: ${EXT_RELEASE} ****"
+          echo "External version: ${EXT_RELEASE}" >> $GITHUB_STEP_SUMMARY
+          echo "**** Retrieving last pushed version ****"
+          image="${{ github.repository_owner }}/sonarr"
+          token=$(curl -sX GET "https://ghcr.io/token?scope=repository%3A${{ github.repository_owner }}%2Fsonarr%3Apull" | jq -r '.token')
+          multidigest=$(curl -s -H "Authorization: Bearer ${token}" -H "Accept: application/vnd.oci.image.index.v1+json" "https://ghcr.io/v2/${image}/manifests/develop" | jq -r 'first(.manifests[].digest)')
+          digest=$(curl -s -H "Authorization: Bearer ${token}" -H "Accept: application/vnd.oci.image.manifest.v1+json" "https://ghcr.io/v2/${image}/manifests/${multidigest}" | jq -r '.config.digest')
+          image_info=$(curl -sL -H "Authorization: Bearer ${token}" "https://ghcr.io/v2/${image}/blobs/${digest}")
+          if [[ $(echo $image_info | jq -r '.container_config') == "null" ]]; then
+            image_info=$(echo $image_info | jq -r '.config')
+          else
+            image_info=$(echo $image_info | jq -r '.container_config')
+          fi
+          IMAGE_RELEASE=$(echo ${image_info} | jq -r '.Labels.build_version')
+          IMAGE_VERSION=$(echo ${IMAGE_RELEASE} | awk -F'-develop' '{print $1}')
+          if [ -z "${IMAGE_VERSION}" ]; then
+            echo "**** Can't retrieve last pushed version, exiting ****"
+            echo "Can't retrieve last pushed version, exiting" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "**** Last pushed version: ${IMAGE_VERSION} ****"
+          echo "Last pushed version: ${IMAGE_VERSION}" >> $GITHUB_STEP_SUMMARY
+          if [ "${EXT_RELEASE}" == "${IMAGE_VERSION}" ]; then
+            echo "**** Version ${EXT_RELEASE} already pushed, exiting ****"
+            echo "Version ${EXT_RELEASE} already pushed, exiting" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          else
+            echo "**** New version ${EXT_RELEASE} found; old version was ${IMAGE_VERSION}. Triggering new build ****"
+            echo "New version ${EXT_RELEASE} found; old version was ${IMAGE_VERSION}. Triggering new build" >> $GITHUB_STEP_SUMMARY
+            curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" -d '{"ref":"refs/heads/develop"}' https://api.github.com/repos/${{ github.repository }}/actions/workflows/build.yml/dispatches
+          fi

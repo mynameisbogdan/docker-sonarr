@@ -1,0 +1,164 @@
+name: 'Build Docker Image'
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        type: string
+        default: 'build'
+  schedule:
+    - cron: '0 21 * * 5'
+  pull_request:
+    paths:
+      - ".github/workflows/build.yml"
+      - "patches/**"
+      - "root/**"
+      - "Dockerfile"
+  push:
+    branches:
+      - develop
+    paths:
+      - ".github/workflows/build.yml"
+      - "patches/**"
+      - "root/**"
+      - "Dockerfile"
+
+permissions:
+  contents: read
+  packages: write
+  
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'build' }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: "Build Docker Image (${{ github.event.pull_request.number || inputs.branch || 'build' }})"
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    env:
+      CI: 1
+      FORCE_COLOR: 0
+      NO_COLOR: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_VERSION: 8.0.301
+      BRANCH: develop # used in UpdateVersionNumber
+      BRANCH_TO_BUILD: ${{ inputs.branch || 'build' }}
+      RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+    steps:
+      - name: Generate metadata
+        id: gen_meta
+        run: |
+          echo "tag_branch=${{ env.BRANCH_TO_BUILD }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+          echo "BRANCH=${RAW_BRANCH_NAME//\//-}" >> "$GITHUB_ENV"
+            
+      - name: Retrieving external version
+        id: ext_release
+        run: |
+          EXT_RELEASE=$(curl -sL "https://services.sonarr.tv/v1/releases" | jq -r '[.[] | select(.releaseChannel=="v4-nightly" or .releaseChannel=="v4-stable") | .version] | sort | reverse | first')
+          if [ -z "${EXT_RELEASE}" ] || [ "${EXT_RELEASE}" == "null" ]; then
+            echo "**** Can't retrieve external version, exiting ****"
+            echo "Can't retrieve external version, exiting" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          EXT_RELEASE=$(echo ${EXT_RELEASE} | sed 's/[~,%@+;:/]//g')
+          echo "**** External version: ${EXT_RELEASE} ****"
+          echo "External version: ${EXT_RELEASE}" >> $GITHUB_STEP_SUMMARY
+          echo "SONARR_VERSION=${EXT_RELEASE}" >> $GITHUB_ENV
+          if [[ "${EXT_RELEASE}" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)$ ]]; then
+            SEMVER="${BASH_REMATCH[1]}"
+            echo "**** Semantic version: ${SEMVER} ****"
+            echo "Semantic version: ${SEMVER}" >> $GITHUB_STEP_SUMMARY
+            echo "SEMVER=${SEMVER}" >> $GITHUB_ENV
+          else
+            echo "**** Can't parse semantic version, exiting ****"
+            exit 2
+          fi
+
+      - uses: actions/checkout@v4.1.6
+
+      - uses: actions/checkout@v4.1.6
+        with:
+          repository: ${{ github.repository_owner }}/Sonarr
+          ref: ${{ env.BRANCH_TO_BUILD }}
+          path: build
+
+      - name: Apply patches
+        working-directory: build
+        run: |
+          git apply --stat --apply ../patches/001-analytics_enabled_respect_configuration.patch
+          git apply --stat --apply ../patches/002-disable_server_side_notification.patch
+          git apply --stat --apply ../patches/003-disable_system_time_check.patch
+          git apply --stat --apply ../patches/004-disable_updates.patch
+          git apply --stat --apply ../patches/005-disable_sentry.patch
+          git apply --stat --apply ../patches/006-remove_more_info.patch
+          git apply --stat --apply ../patches/007-qbittorrent_remove_log_response.patch
+          git apply --stat --apply ../patches/008-removed_series_warning.patch
+          git apply --stat --apply ../patches/009-series_index_secondary_sort_key.patch
+
+      - uses: actions/setup-node@v4.0.2
+        with:
+          node-version: '20.x'
+
+      - uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: Create temporary global.json
+        run: |
+          echo '{"sdk":{"version": "${{ env.DOTNET_VERSION }}"}}' > ./build/global.json
+          
+      - working-directory: build
+        run: dotnet --info
+
+      - name: Build Package
+        working-directory: build
+        run: |
+          ./build.sh --backend --frontend --lint --packages -f net8.0 -r linux-musl-x64
+          rm -rf _artifacts/linux-musl-x64/net8.0/Sonarr/Sonarr.Update
+          find . -name "Sonarr" -exec chmod a+x {} \;
+          find . -name "ffprobe" -exec chmod a+x {} \;
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@v5.5.1
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/sonarr
+          labels: |
+            org.opencontainers.image.authors=${{ github.repository_owner }}
+            org.opencontainers.image.vendor=${{ github.repository_owner }}
+          tags: |
+            type=raw,value=${{ env.BRANCH }}-${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ steps.gen_meta.outputs.tag_branch }}-${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=raw,value=branch-${{ steps.gen_meta.outputs.tag_branch }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=ref,event=pr
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.3.0
+        with:
+          platforms: linux/amd64
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v5.3.0
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ env.SONARR_VERSION }}-${{ env.BRANCH }}-r${{ github.run_number }}

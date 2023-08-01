@@ -1,0 +1,47 @@
+diff --git a/frontend/src/Components/Page/Header/PageHeader.js b/frontend/src/Components/Page/Header/PageHeader.js
+index 2af0520151..dcaff372b9 100644
+--- a/frontend/src/Components/Page/Header/PageHeader.js
++++ b/frontend/src/Components/Page/Header/PageHeader.js
+@@ -4,7 +4,6 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
+ import IconButton from 'Components/Link/IconButton';
+ import Link from 'Components/Link/Link';
+ import { icons } from 'Helpers/Props';
+-import translate from 'Utilities/String/translate';
+ import KeyboardShortcutsModal from './KeyboardShortcutsModal';
+ import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+ import SeriesSearchInputConnector from './SeriesSearchInputConnector';
+@@ -75,14 +74,6 @@ class PageHeader extends Component {
+         <SeriesSearchInputConnector />
+ 
+         <div className={styles.right}>
+-          <IconButton
+-            className={styles.donate}
+-            name={icons.HEART}
+-            aria-label={translate('Donate')}
+-            to="https://sonarr.tv/donate.html"
+-            size={14}
+-            title={translate('Donate')}
+-          />
+           <PageHeaderActionsMenuConnector
+             onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}
+           />
+diff --git a/frontend/src/System/Status/Status.js b/frontend/src/System/Status/Status.js
+index 429a149ee2..88135d5508 100644
+--- a/frontend/src/System/Status/Status.js
++++ b/frontend/src/System/Status/Status.js
+@@ -5,7 +5,6 @@ import translate from 'Utilities/String/translate';
+ import AboutConnector from './About/AboutConnector';
+ import DiskSpaceConnector from './DiskSpace/DiskSpaceConnector';
+ import HealthConnector from './Health/HealthConnector';
+-import MoreInfo from './MoreInfo/MoreInfo';
+ 
+ class Status extends Component {
+ 
+@@ -19,7 +18,6 @@ class Status extends Component {
+           <HealthConnector />
+           <DiskSpaceConnector />
+           <AboutConnector />
+-          <MoreInfo />
+         </PageContentBody>
+       </PageContent>
+     );

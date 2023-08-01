@@ -1,0 +1,142 @@
+diff --git a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
+index 750ad659c5..4c28287ab5 100644
+--- a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
++++ b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
+@@ -6,7 +6,6 @@
+ using NLog.Targets;
+ using NzbDrone.Common.EnvironmentInfo;
+ using NzbDrone.Common.Extensions;
+-using NzbDrone.Common.Instrumentation.Sentry;
+ 
+ namespace NzbDrone.Common.Instrumentation
+ {
+@@ -39,8 +38,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+                 RegisterDebugger();
+             }
+ 
+-            RegisterSentry(updateApp, appFolderInfo);
+-
+             if (updateApp)
+             {
+                 RegisterUpdateFile(appFolderInfo);
+@@ -60,50 +57,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+             LogManager.ReconfigExistingLoggers();
+         }
+ 
+-        private static void RegisterSentry(bool updateClient, IAppFolderInfo appFolderInfo)
+-        {
+-            string dsn;
+-
+-            if (updateClient)
+-            {
+-                dsn = RuntimeInfo.IsProduction
+-                    ? "https://80777986b95f44a1a90d1eb2f3af1e36@sentry.sonarr.tv/11"
+-                    : "https://6168f0946aba4e60ac23e469ac08eac5@sentry.sonarr.tv/9";
+-            }
+-            else
+-            {
+-                dsn = RuntimeInfo.IsProduction
+-                    ? "https://e2adcbe52caf46aeaebb6b1dcdfe10a1@sentry.sonarr.tv/8"
+-                    : "https://4ee3580e01d8407c96a7430fbc953512@sentry.sonarr.tv/10";
+-            }
+-
+-            Target target;
+-            try
+-            {
+-                target = new SentryTarget(dsn, appFolderInfo)
+-                {
+-                    Name = "sentryTarget",
+-                    Layout = "${message}"
+-                };
+-            }
+-            catch (Exception ex)
+-            {
+-                Console.WriteLine("Failed to load dependency, may need an OS update: " + ex.ToString());
+-                LogManager.GetLogger(nameof(NzbDroneLogger)).Debug(ex, "Failed to load dependency, may need an OS update");
+-
+-                // We still need the logging rules, so use a null target.
+-                target = new NullTarget();
+-            }
+-
+-            var loggingRule = new LoggingRule("*", updateClient ? LogLevel.Trace : LogLevel.Warn, target);
+-            LogManager.Configuration.AddTarget("sentryTarget", target);
+-            LogManager.Configuration.LoggingRules.Add(loggingRule);
+-
+-            // Events logged to Sentry go only to Sentry.
+-            var loggingRuleSentry = new LoggingRule("Sentry", LogLevel.Debug, target) { Final = true };
+-            LogManager.Configuration.LoggingRules.Insert(0, loggingRuleSentry);
+-        }
+-
+         private static void RegisterDebugger()
+         {
+             var target = new DebuggerTarget();
+diff --git a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
+index d4b44eaa66..ff18c4a0bf 100644
+--- a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
++++ b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
+@@ -4,10 +4,8 @@
+ using NLog.Config;
+ using NLog.Targets.Syslog;
+ using NLog.Targets.Syslog.Settings;
+-using NzbDrone.Common.EnvironmentInfo;
+ using NzbDrone.Common.Extensions;
+ using NzbDrone.Common.Instrumentation;
+-using NzbDrone.Common.Instrumentation.Sentry;
+ using NzbDrone.Core.Configuration;
+ using NzbDrone.Core.Configuration.Events;
+ using NzbDrone.Core.Datastore;
+@@ -62,9 +60,6 @@ public void Reconfigure()
+             // Log Sql
+             SqlBuilderExtensions.LogSql = _configFileProvider.LogSql;
+ 
+-            // Sentry
+-            ReconfigureSentry();
+-
+             LogManager.ReconfigExistingLoggers();
+         }
+ 
+@@ -99,16 +94,6 @@ private void SetLogRotation()
+             }
+         }
+ 
+-        private void ReconfigureSentry()
+-        {
+-            var sentryTarget = LogManager.Configuration.AllTargets.OfType<SentryTarget>().FirstOrDefault();
+-            if (sentryTarget != null)
+-            {
+-                sentryTarget.SentryEnabled = (RuntimeInfo.IsProduction && _configFileProvider.AnalyticsEnabled) || RuntimeInfo.IsDevelopment;
+-                sentryTarget.FilterEvents = _configFileProvider.FilterSentryEvents;
+-            }
+-        }
+-
+         private void SetSyslogParameters(string syslogServer, int syslogPort, LogLevel minimumLogLevel)
+         {
+             var syslogTarget = new SyslogTarget();
+diff --git a/src/NzbDrone.Host/Startup.cs b/src/NzbDrone.Host/Startup.cs
+index eb18394fca..ed5af83bf0 100644
+--- a/src/NzbDrone.Host/Startup.cs
++++ b/src/NzbDrone.Host/Startup.cs
+@@ -12,7 +12,6 @@
+ using Microsoft.OpenApi.Models;
+ using NLog.Extensions.Logging;
+ using NzbDrone.Common.EnvironmentInfo;
+-using NzbDrone.Common.Instrumentation;
+ using NzbDrone.Common.Processes;
+ using NzbDrone.Common.Serializer;
+ using NzbDrone.Core.Configuration;
+@@ -198,7 +197,6 @@ public void ConfigureServices(IServiceCollection services)
+                               Lazy<ILogDatabase> logDatabaseFactory,
+                               DatabaseTarget dbTarget,
+                               ISingleInstancePolicy singleInstancePolicy,
+-                              InitializeLogger initializeLogger,
+                               ReconfigureLogging reconfigureLogging,
+                               IAppFolderFactory appFolderFactory,
+                               IProvidePidFile pidFileProvider,
+@@ -208,7 +206,6 @@ public void ConfigureServices(IServiceCollection services)
+                               IEventAggregator eventAggregator,
+                               SonarrErrorPipeline errorHandler)
+         {
+-            initializeLogger.Initialize();
+             appFolderFactory.Register();
+             pidFileProvider.Write();
+ 

@@ -1,0 +1,22 @@
+diff --git a/src/NzbDrone.Core/HealthCheck/Checks/RemovedSeriesCheck.cs b/src/NzbDrone.Core/HealthCheck/Checks/RemovedSeriesCheck.cs
+index 363d3010d2..1f58c2befa 100644
+--- a/src/NzbDrone.Core/HealthCheck/Checks/RemovedSeriesCheck.cs
++++ b/src/NzbDrone.Core/HealthCheck/Checks/RemovedSeriesCheck.cs
+@@ -34,7 +34,7 @@ public override HealthCheck Check()
+             if (deletedSeries.Count == 1)
+             {
+                 return new HealthCheck(GetType(),
+-                    HealthCheckResult.Error,
++                    HealthCheckResult.Warning,
+                     _localizationService.GetLocalizedString("RemovedSeriesSingleRemovedHealthCheckMessage", new Dictionary<string, object>
+                     {
+                         { "series", seriesText }
+@@ -43,7 +43,7 @@ public override HealthCheck Check()
+             }
+ 
+             return new HealthCheck(GetType(),
+-                HealthCheckResult.Error,
++                HealthCheckResult.Warning,
+                 _localizationService.GetLocalizedString("RemovedSeriesMultipleRemovedHealthCheckMessage", new Dictionary<string, object>
+                 {
+                     { "series", seriesText }

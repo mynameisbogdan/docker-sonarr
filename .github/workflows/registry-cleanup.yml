@@ -1,0 +1,29 @@
+name: Delete old container images
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 0 * * 6'
+  push:
+    paths:
+      - ".github/workflows/registry-cleanup.yml"
+
+concurrency:
+  group: registry-cleanup-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  clean-ghcr:
+    name: Delete old unused container images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old images
+        uses: snok/container-retention-policy@v2.2.1
+        with:
+          image-names: sonarr
+          cut-off: 24 hour ago UTC
+          timestamp-to-use: updated_at
+          keep-at-least: 10
+          skip-tags: latest,develop,nightly
+          account-type: personal
+          token: ${{ secrets.GHCR_PAT }}
