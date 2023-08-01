@@ -1,0 +1,313 @@
+name: 'Build Docker Image'
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        type: string
+        default: 'build'
+  schedule:
+    - cron: '0 12 1 * *'
+  pull_request:
+    paths:
+      - ".github/workflows/build.yml"
+      - "patches/**"
+      - "root/**"
+      - "Dockerfile"
+  push:
+    branches:
+      - develop
+    paths:
+      - ".github/workflows/build.yml"
+      - "patches/**"
+      - "root/**"
+      - "Dockerfile"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'build' }}
+  cancel-in-progress: true
+
+env:
+  FRAMEWORK: net8.0
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.head.repo.fork }}
+    outputs:
+      framework: ${{ steps.variables.outputs.framework }}
+      branch: ${{ steps.variables.outputs.branch }}
+      build_branch: ${{ steps.variables.outputs.build_branch }}
+      tag_branch: ${{ steps.variables.outputs.tag_branch }}
+      version: ${{ steps.ext_release.outputs.version }}
+      semantic_version: ${{ steps.ext_release.outputs.semantic_version }}
+    steps:
+      - name: Setup variables
+        id: variables
+        env:
+          BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+          BUILD_BRANCH: ${{ inputs.branch || 'build' }}
+        run: |
+          BRANCH=${BRANCH_NAME,,}
+
+          echo "framework=${FRAMEWORK}" >> "$GITHUB_OUTPUT"
+          echo "branch=${BRANCH//\//-}" >> "$GITHUB_OUTPUT"
+          echo "build_branch=${BUILD_BRANCH}" >> $GITHUB_OUTPUT
+          echo "tag_branch=${BUILD_BRANCH,,}" >> $GITHUB_OUTPUT
+
+      - name: Retrieving external version
+        id: ext_release
+        run: |
+          EXT_RELEASE=$(curl -sL "https://services.sonarr.tv/v1/releases" | jq -r 'first(.[] | select(.branch=="develop") | .version)')
+          if [ -z "${EXT_RELEASE}" ] || [ "${EXT_RELEASE}" == "null" ]; then
+            echo "**** Can't retrieve external version, exiting ****"
+            echo "Can't retrieve external version, exiting" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          EXT_RELEASE=$(echo ${EXT_RELEASE} | sed 's/[~,%@+;:/]//g')
+          echo "**** External version: ${EXT_RELEASE} ****"
+          echo "External version: ${EXT_RELEASE}" >> $GITHUB_STEP_SUMMARY
+          echo "version=${EXT_RELEASE}" >> "$GITHUB_OUTPUT"
+          if [[ "${EXT_RELEASE}" =~ ^([0-9]+\.[0-9]+\.[0-9]+)\.([0-9]+)$ ]]; then
+            SEMVER="${BASH_REMATCH[1]}"
+            echo "**** Semantic version: ${SEMVER} ****"
+            echo "Semantic version: ${SEMVER}" >> $GITHUB_STEP_SUMMARY
+            echo "semantic_version=${SEMVER}" >> "$GITHUB_OUTPUT"
+          else
+            echo "**** Can't parse semantic version, exiting ****"
+            exit 2
+          fi
+
+  frontend:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          sparse-checkout: |
+            /patches/*
+          sparse-checkout-cone-mode: false
+
+      - name: Check out source code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: ${{ github.repository_owner }}/Sonarr
+          ref: ${{ needs.prepare.outputs.build_branch }}
+          path: build
+
+      - name: Apply patches
+        working-directory: build
+        run: |
+          git apply --stat --apply ../patches/*.patch
+
+      - name: Setup node
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: build/yarn.lock
+
+      - name: Yarn Install
+        working-directory: build
+        run: yarn install --frozen-lockfile
+
+      - name: Lint
+        working-directory: build
+        run: yarn lint
+
+      - name: Stylelint
+        working-directory: build
+        run: yarn stylelint -f github
+
+      - name: Build
+        working-directory: build
+        run: yarn build --env production
+
+      - name: Publish UI Artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: build_ui
+          path: build/_output/UI/**/*
+          if-no-files-found: error
+
+  backend:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime:
+          - linux-musl-arm64
+          - linux-musl-x64
+    env:
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+    steps:
+      - name: Setup environment variables
+        run: |
+          echo "SONARR_VERSION=${{ needs.prepare.outputs.version }}" >> "$GITHUB_ENV"
+
+      - name: Check out
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Check out source code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: ${{ github.repository_owner }}/Sonarr
+          ref: ${{ needs.prepare.outputs.build_branch }}
+          path: build
+
+      - name: Apply patches
+        working-directory: build
+        run: |
+          git apply --stat --apply ../patches/*.patch
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
+        with:
+          dotnet-version: '8.0.x'
+
+      - working-directory: build
+        run: dotnet --info
+
+      - name: Build
+        working-directory: build
+        env:
+          BRANCH: develop
+        run: |
+          ./build.sh --backend -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: build-${{ matrix.runtime }}
+          path: |
+            build/_output/*/${{ matrix.runtime }}/publish/*
+            build/_output/Sonarr.Update/*/${{ matrix.runtime }}/publish/*
+          if-no-files-found: error
+
+  package:
+    needs:
+      - prepare
+      - frontend
+      - backend
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        runtime:
+          - linux-musl-arm64
+          - linux-musl-x64
+    steps:
+      - name: Check out source code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          repository: ${{ github.repository_owner }}/Sonarr
+          ref: ${{ needs.prepare.outputs.build_branch }}
+          sparse-checkout: |
+            /build.sh
+            /LICENSE*
+          sparse-checkout-cone-mode: false
+
+      - name: Download Artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: build-${{ matrix.runtime }}
+          path: _output
+
+      - name: Download UI Artifact
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          name: build_ui
+          path: _output/UI
+
+      - name: Package
+        run: |
+          ./build.sh --packages -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
+          cp -r _output/UI _artifacts/${{ matrix.runtime }}/${{ needs.prepare.outputs.framework }}/Sonarr
+          rm -rf _artifacts/${{ matrix.runtime }}/${{ needs.prepare.outputs.framework }}/Sonarr/Sonarr.Update
+          find _artifacts -name "Sonarr" -exec chmod a+x {} \;
+          find _artifacts -name "ffprobe" -exec chmod a+x {} \;
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: package-${{ matrix.runtime }}
+          path: _artifacts/**/*
+          if-no-files-found: error
+
+  docker:
+    needs:
+      - prepare
+      - package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Setup environment variables
+        run: |
+          echo "BRANCH=${{ needs.prepare.outputs.branch }}" >> "$GITHUB_ENV"
+          echo "BRANCH_TO_BUILD=${{ needs.prepare.outputs.build_branch }}" >> "$GITHUB_ENV"
+          echo "VERSION=${{ needs.prepare.outputs.version }}" >> "$GITHUB_ENV"
+          echo "SEMVER=${{ needs.prepare.outputs.semantic_version }}" >> "$GITHUB_ENV"
+
+      - name: Check out
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Download package artifacts
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
+        with:
+          pattern: package-*
+          path: packages
+          merge-multiple: true
+
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
+        with:
+          images: |
+            ghcr.io/${{ github.repository_owner }}/sonarr
+          labels: |
+            build_version=${{ env.VERSION }}
+          tags: |
+            type=raw,value=${{ env.BRANCH }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ needs.prepare.outputs.tag_branch }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=raw,value=branch-${{ needs.prepare.outputs.tag_branch }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=ref,event=pr
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
+        with:
+          platforms: |
+            linux/arm64
+            linux/amd64
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
+        with:
+          context: .
+          push: true
+          platforms: |
+            linux/arm64
+            linux/amd64
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ env.VERSION }}-${{ env.BRANCH }}-r${{ github.run_number }}
+            FRAMEWORK=${{ needs.prepare.outputs.framework }}
