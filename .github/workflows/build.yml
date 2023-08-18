@@ -89,7 +89,7 @@ jobs:
 #        run: |
 #          git apply --stat --apply ../patches/001-analytics_enabled_respect_configuration.patch
 
-      - uses: actions/setup-node@v3.7.0
+      - uses: actions/setup-node@v3.8.1
         with:
           node-version: '18.x'
           cache: 'yarn'
