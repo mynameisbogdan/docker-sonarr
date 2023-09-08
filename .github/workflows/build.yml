@@ -76,9 +76,9 @@ jobs:
             exit 2
           fi
 
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
 
-      - uses: actions/checkout@v3.6.0
+      - uses: actions/checkout@v4.0.0
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ env.BRANCH_TO_BUILD }}
@@ -106,7 +106,7 @@ jobs:
       - working-directory: build
         run: dotnet --info
 
-      - uses: actions/cache@v3.3.1
+      - uses: actions/cache@v3.3.2
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
@@ -152,7 +152,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v4.1.1
+        uses: docker/build-push-action@v4.2.1
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
