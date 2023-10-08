@@ -1,0 +1,40 @@
+diff --git a/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV1.cs b/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV1.cs
+index 2432a47d0c..e808076c6c 100644
+--- a/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV1.cs
++++ b/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV1.cs
+@@ -293,7 +293,6 @@ private HttpRequestBuilder BuildRequest(QBittorrentSettings settings)
+         {
+             var requestBuilder = new HttpRequestBuilder(settings.UseSsl, settings.Host, settings.Port, settings.UrlBase)
+             {
+-                LogResponseContent = true,
+                 NetworkCredential = new BasicNetworkCredential(settings.Username, settings.Password)
+             };
+             return requestBuilder;
+@@ -312,7 +311,6 @@ private string ProcessRequest(HttpRequestBuilder requestBuilder, QBittorrentSett
+             AuthenticateClient(requestBuilder, settings);
+ 
+             var request = requestBuilder.Build();
+-            request.LogResponseContent = true;
+             request.SuppressHttpErrorStatusCodes = new[] { HttpStatusCode.Forbidden };
+ 
+             HttpResponse response;
+diff --git a/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV2.cs b/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV2.cs
+index d59892bfd8..c7a202b494 100644
+--- a/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV2.cs
++++ b/src/NzbDrone.Core/Download/Clients/QBittorrent/QBittorrentProxyV2.cs
+@@ -343,7 +343,6 @@ private HttpRequestBuilder BuildRequest(QBittorrentSettings settings)
+         {
+             var requestBuilder = new HttpRequestBuilder(settings.UseSsl, settings.Host, settings.Port, settings.UrlBase)
+             {
+-                LogResponseContent = true,
+                 NetworkCredential = new BasicNetworkCredential(settings.Username, settings.Password)
+             };
+             return requestBuilder;
+@@ -362,7 +361,6 @@ private string ProcessRequest(HttpRequestBuilder requestBuilder, QBittorrentSett
+             AuthenticateClient(requestBuilder, settings);
+ 
+             var request = requestBuilder.Build();
+-            request.LogResponseContent = true;
+             request.SuppressHttpErrorStatusCodes = new[] { HttpStatusCode.Forbidden };
+ 
+             HttpResponse response;

@@ -84,10 +84,16 @@ jobs:
           ref: ${{ env.BRANCH_TO_BUILD }}
           path: build
 
-#      - name: Apply patches
-#        working-directory: build
-#        run: |
-#          git apply --stat --apply ../patches/001-analytics_enabled_respect_configuration.patch
+      - name: Apply patches
+        working-directory: build
+        run: |
+          git apply --stat --apply ../patches/001-analytics_enabled_respect_configuration.patch
+          git apply --stat --apply ../patches/002-disable_server_side_notification.patch
+          git apply --stat --apply ../patches/003-disable_system_time_check.patch
+          git apply --stat --apply ../patches/004-disable_updates.patch
+          git apply --stat --apply ../patches/005-disable_sentry.patch
+          git apply --stat --apply ../patches/006-remove_more_info.patch
+          git apply --stat --apply ../patches/007-qbittorrent_remove_log_response.patch
 
       - uses: actions/setup-node@v3.8.1
         with:

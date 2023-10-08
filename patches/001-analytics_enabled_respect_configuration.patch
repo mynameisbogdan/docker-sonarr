@@ -1,0 +1,20 @@
+diff --git a/src/NzbDrone.Core/Analytics/AnalyticsService.cs b/src/NzbDrone.Core/Analytics/AnalyticsService.cs
+index 6c71576a7b..182b4ad6fd 100644
+--- a/src/NzbDrone.Core/Analytics/AnalyticsService.cs
++++ b/src/NzbDrone.Core/Analytics/AnalyticsService.cs
+@@ -1,6 +1,5 @@
+ ﻿using System;
+ using System.Linq;
+-using NzbDrone.Common.EnvironmentInfo;
+ using NzbDrone.Core.Configuration;
+ using NzbDrone.Core.Datastore;
+ using NzbDrone.Core.History;
+@@ -24,7 +23,7 @@ public AnalyticsService(IHistoryService historyService, IConfigFileProvider conf
+             _historyService = historyService;
+         }
+ 
+-        public bool IsEnabled => (_configFileProvider.AnalyticsEnabled && RuntimeInfo.IsProduction) || RuntimeInfo.IsDevelopment;
++        public bool IsEnabled => _configFileProvider.AnalyticsEnabled;
+ 
+         public bool InstallIsActive
+         {
