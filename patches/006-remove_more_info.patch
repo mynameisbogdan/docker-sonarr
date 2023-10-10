@@ -1,5 +1,5 @@
 diff --git a/frontend/src/Components/Page/Header/PageHeader.js b/frontend/src/Components/Page/Header/PageHeader.js
-index 23d7d7f997..dcaff372b9 100644
+index 2af0520151..dcaff372b9 100644
 --- a/frontend/src/Components/Page/Header/PageHeader.js
 +++ b/frontend/src/Components/Page/Header/PageHeader.js
 @@ -4,7 +4,6 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
@@ -10,7 +10,7 @@ index 23d7d7f997..dcaff372b9 100644
  import KeyboardShortcutsModal from './KeyboardShortcutsModal';
  import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
  import SeriesSearchInputConnector from './SeriesSearchInputConnector';
-@@ -75,13 +74,6 @@ class PageHeader extends Component {
+@@ -75,14 +74,6 @@ class PageHeader extends Component {
          <SeriesSearchInputConnector />
  
          <div className={styles.right}>
@@ -20,6 +20,7 @@ index 23d7d7f997..dcaff372b9 100644
 -            aria-label={translate('Donate')}
 -            to="https://sonarr.tv/donate.html"
 -            size={14}
+-            title={translate('Donate')}
 -          />
            <PageHeaderActionsMenuConnector
              onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}
