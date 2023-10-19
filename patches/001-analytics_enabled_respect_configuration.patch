@@ -3,7 +3,7 @@ index 6c71576a7b..182b4ad6fd 100644
 --- a/src/NzbDrone.Core/Analytics/AnalyticsService.cs
 +++ b/src/NzbDrone.Core/Analytics/AnalyticsService.cs
 @@ -1,6 +1,5 @@
- ﻿using System;
+ using System;
  using System.Linq;
 -using NzbDrone.Common.EnvironmentInfo;
  using NzbDrone.Core.Configuration;
