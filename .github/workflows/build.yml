@@ -112,7 +112,7 @@ jobs:
       - working-directory: build
         run: dotnet --info
 
-      - uses: actions/cache@v3.3.2
+      - uses: actions/cache@v3.3.3
         with:
           path: ~/.nuget/packages
           key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
