@@ -94,6 +94,7 @@ jobs:
           git apply --stat --apply ../patches/005-disable_sentry.patch
           git apply --stat --apply ../patches/006-remove_more_info.patch
           git apply --stat --apply ../patches/007-qbittorrent_remove_log_response.patch
+          git apply --stat --apply ../patches/008-removed_series_warning.patch
 
       - uses: actions/setup-node@v4.0.1
         with:
