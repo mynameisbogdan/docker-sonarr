@@ -1,5 +1,5 @@
 diff --git a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
-index f654de5855..4c28287ab5 100644
+index 750ad659c5..4c28287ab5 100644
 --- a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
 +++ b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
 @@ -6,7 +6,6 @@
@@ -14,7 +14,7 @@ index f654de5855..4c28287ab5 100644
                  RegisterDebugger();
              }
  
--            RegisterSentry(updateApp);
+-            RegisterSentry(updateApp, appFolderInfo);
 -
              if (updateApp)
              {
@@ -23,7 +23,7 @@ index f654de5855..4c28287ab5 100644
              LogManager.ReconfigExistingLoggers();
          }
  
--        private static void RegisterSentry(bool updateClient)
+-        private static void RegisterSentry(bool updateClient, IAppFolderInfo appFolderInfo)
 -        {
 -            string dsn;
 -
@@ -43,7 +43,7 @@ index f654de5855..4c28287ab5 100644
 -            Target target;
 -            try
 -            {
--                target = new SentryTarget(dsn)
+-                target = new SentryTarget(dsn, appFolderInfo)
 -                {
 -                    Name = "sentryTarget",
 -                    Layout = "${message}"
@@ -113,7 +113,7 @@ index d4b44eaa66..ff18c4a0bf 100644
          {
              var syslogTarget = new SyslogTarget();
 diff --git a/src/NzbDrone.Host/Startup.cs b/src/NzbDrone.Host/Startup.cs
-index 4bcc75e60d..71179f285c 100644
+index eb18394fca..ed5af83bf0 100644
 --- a/src/NzbDrone.Host/Startup.cs
 +++ b/src/NzbDrone.Host/Startup.cs
 @@ -12,7 +12,6 @@
@@ -124,7 +124,7 @@ index 4bcc75e60d..71179f285c 100644
  using NzbDrone.Common.Processes;
  using NzbDrone.Common.Serializer;
  using NzbDrone.Core.Configuration;
-@@ -196,7 +195,6 @@ public void ConfigureServices(IServiceCollection services)
+@@ -198,7 +197,6 @@ public void ConfigureServices(IServiceCollection services)
                                Lazy<ILogDatabase> logDatabaseFactory,
                                DatabaseTarget dbTarget,
                                ISingleInstancePolicy singleInstancePolicy,
@@ -132,7 +132,7 @@ index 4bcc75e60d..71179f285c 100644
                                ReconfigureLogging reconfigureLogging,
                                IAppFolderFactory appFolderFactory,
                                IProvidePidFile pidFileProvider,
-@@ -206,7 +204,6 @@ public void ConfigureServices(IServiceCollection services)
+@@ -208,7 +206,6 @@ public void ConfigureServices(IServiceCollection services)
                                IEventAggregator eventAggregator,
                                SonarrErrorPipeline errorHandler)
          {
