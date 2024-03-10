@@ -6,7 +6,7 @@ updates:
     schedule:
       interval: "weekly"
       day: "friday"
-      time: "13:00"
+      time: "10:00"
     groups:
       github:
         patterns:
