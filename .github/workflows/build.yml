@@ -109,7 +109,7 @@ jobs:
           
       - name: Create temporary global.json
         run: |
-          echo '{"sdk":{"version": "${{ env.DOTNET_VERSION }}"}}' > ./global.json
+          echo '{"sdk":{"version": "${{ env.DOTNET_VERSION }}"}}' > ./build/global.json
           
       - working-directory: build
         run: dotnet --info
