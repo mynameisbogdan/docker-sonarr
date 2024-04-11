@@ -46,7 +46,7 @@ jobs:
       BRANCH_TO_BUILD: ${{ inputs.branch || 'build' }}
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
-      DOTNET_VERSION: 6.0.413
+      DOTNET_VERSION: 6.0.421
     steps:
       - name: Generate metadata
         id: gen_meta
