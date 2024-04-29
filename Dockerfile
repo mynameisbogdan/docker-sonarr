@@ -12,6 +12,7 @@ LABEL maintainer="nobody"
 
 # environment settings
 ENV XDG_CONFIG_HOME="/config/xdg"
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=true
 
 COPY build/_artifacts/linux-musl-x64/net6.0/Sonarr/ /app/sonarr/bin
 
