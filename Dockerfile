@@ -14,7 +14,7 @@ LABEL maintainer="nobody"
 ENV XDG_CONFIG_HOME="/config/xdg"
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=true
 
-COPY build/_artifacts/linux-musl-x64/net6.0/Sonarr/ /app/sonarr/bin
+COPY build/_artifacts/linux-musl-x64/net8.0/Sonarr/ /app/sonarr/bin
 
 RUN set -eux && \
   echo "**** install packages ****" && \
