@@ -30,12 +30,12 @@ permissions:
   packages: write
   
 concurrency:
-  group: build-${{ github.ref }}-${{ inputs.branch || 'build' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'build' }}
   cancel-in-progress: true
 
 jobs:
   build:
-    name: "Build Docker Image (${{ inputs.branch || 'build' }})"
+    name: "Build Docker Image (${{ github.event.pull_request.number || inputs.branch || 'build' }})"
     runs-on: ubuntu-latest
     if: github.repository_owner == 'mynameisbogdan'
     env:
@@ -46,11 +46,13 @@ jobs:
       DOTNET_VERSION: 6.0.421
       BRANCH: develop # used in UpdateVersionNumber
       BRANCH_TO_BUILD: ${{ inputs.branch || 'build' }}
+      RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - name: Generate metadata
         id: gen_meta
         run: |
           echo "tag_branch=${{ env.BRANCH_TO_BUILD }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+          echo "BRANCH=${RAW_BRANCH_NAME/\//-}" >> "$GITHUB_ENV"
             
       - name: Retrieving external version
         id: ext_release
@@ -138,13 +140,14 @@ jobs:
             org.opencontainers.image.authors=${{ github.repository_owner }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
           tags: |
-            type=raw,value=${{ github.ref_name }}-${{ env.SONARR_VERSION }},enable=${{ (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
-            type=raw,value=${{ env.SONARR_VERSION }},enable=${{ (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
-            type=raw,value=${{ github.ref_name }}-${{ env.SEMVER }},enable=${{ (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
-            type=raw,value=${{ env.SEMVER }},enable=${{ (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
-            type=raw,value=${{ github.ref_name }},enable=${{ env.BRANCH_TO_BUILD == 'build' }}
-            type=raw,value=${{ steps.gen_meta.outputs.tag_branch }}-${{ env.SONARR_VERSION }},enable=${{ env.BRANCH_TO_BUILD != 'build' }}
-            type=raw,value=branch-${{ steps.gen_meta.outputs.tag_branch }},enable=${{ env.BRANCH_TO_BUILD != 'build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ steps.gen_meta.outputs.tag_branch }}-${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=raw,value=branch-${{ steps.gen_meta.outputs.tag_branch }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=ref,event=pr
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.3.0
@@ -162,9 +165,9 @@ jobs:
         uses: docker/build-push-action@v5.3.0
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           platforms: linux/amd64
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
           build-args: |
-            VERSION=${{ env.SONARR_VERSION }}-${{ github.ref_name }}-r${{ github.run_number }}
+            VERSION=${{ env.SONARR_VERSION }}-${{ env.BRANCH }}-r${{ github.run_number }}
