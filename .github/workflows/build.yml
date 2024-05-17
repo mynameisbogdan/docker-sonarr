@@ -77,9 +77,9 @@ jobs:
             exit 2
           fi
 
-      - uses: actions/checkout@v4.1.4
+      - uses: actions/checkout@v4.1.6
 
-      - uses: actions/checkout@v4.1.4
+      - uses: actions/checkout@v4.1.6
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ env.BRANCH_TO_BUILD }}
