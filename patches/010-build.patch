@@ -1,0 +1,11 @@
+diff --git a/build.sh b/build.sh
+index ee59d2f617..3acb7804ac 100755
+--- a/build.sh
++++ b/build.sh
+@@ -1,5 +1,5 @@
+ #! /usr/bin/env bash
+-set -e
++set -ex
+ 
+ outputFolder='_output'
+ testPackageFolder='_tests'
