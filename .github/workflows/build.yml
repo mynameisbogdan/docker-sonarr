@@ -52,7 +52,7 @@ jobs:
         id: gen_meta
         run: |
           echo "tag_branch=${{ env.BRANCH_TO_BUILD }}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
-          echo "BRANCH=${RAW_BRANCH_NAME/\//-}" >> "$GITHUB_ENV"
+          echo "BRANCH=${RAW_BRANCH_NAME//\//-}" >> "$GITHUB_ENV"
             
       - name: Retrieving external version
         id: ext_release
