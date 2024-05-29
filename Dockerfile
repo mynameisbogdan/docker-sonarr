@@ -1,10 +1,9 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/linuxserver/baseimage-alpine:3.19
+FROM ghcr.io/linuxserver/baseimage-alpine:3.20
 
 # set version label
 ARG VERSION
-ARG SONARR_RELEASE
 ARG SONARR_BRANCH="develop"
 
 LABEL build_version=$VERSION
@@ -25,6 +24,7 @@ RUN set -eux && \
   echo "**** install sonarr ****" && \
   mkdir -p /app/sonarr/bin && \
   echo -e "UpdateMethod=docker\nBranch=${SONARR_BRANCH}\nPackageVersion=${VERSION}" > /app/sonarr/package_info && \
+  printf "Custom version: ${VERSION}" > /build_version && \
   echo "**** cleanup ****" && \
   rm -rf \
     /app/sonarr/bin/Sonarr.Update \
