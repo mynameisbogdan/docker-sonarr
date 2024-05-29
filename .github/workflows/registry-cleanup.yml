@@ -21,7 +21,7 @@ jobs:
         uses: snok/container-retention-policy@v2.2.1
         with:
           image-names: sonarr
-          cut-off: 1 hour ago UTC
+          cut-off: 24 hour ago UTC
           timestamp-to-use: updated_at
           keep-at-least: 10
           skip-tags: latest,develop,nightly
