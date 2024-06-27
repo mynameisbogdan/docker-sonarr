@@ -97,6 +97,7 @@ jobs:
           git apply --stat --apply ../patches/007-qbittorrent_remove_log_response.patch
           git apply --stat --apply ../patches/008-removed_series_warning.patch
           git apply --stat --apply ../patches/009-series_index_secondary_sort_key.patch
+          git apply --stat --apply ../patches/010-series-rename-tag.patch
 
       - uses: actions/setup-node@v4.0.2
         with:

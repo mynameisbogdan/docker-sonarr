@@ -1,0 +1,72 @@
+diff --git a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
+index 714605a994..c487b4f7ce 100644
+--- a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
++++ b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
+@@ -16,6 +16,7 @@
+ using NzbDrone.Core.MediaFiles;
+ using NzbDrone.Core.MediaFiles.MediaInfo;
+ using NzbDrone.Core.Qualities;
++using NzbDrone.Core.Tags;
+ using NzbDrone.Core.Tv;
+ 
+ namespace NzbDrone.Core.Organizer
+@@ -40,6 +41,7 @@ public class FileNameBuilder : IBuildFileNames
+         private readonly IQualityDefinitionService _qualityDefinitionService;
+         private readonly IUpdateMediaInfo _mediaInfoUpdater;
+         private readonly ICustomFormatCalculationService _formatCalculator;
++        private readonly ITagRepository _tagRepository;
+         private readonly ICached<EpisodeFormat[]> _episodeFormatCache;
+         private readonly ICached<AbsoluteEpisodeFormat[]> _absoluteEpisodeFormatCache;
+         private readonly ICached<bool> _requiresEpisodeTitleCache;
+@@ -117,12 +119,14 @@ public FileNameBuilder(INamingConfigService namingConfigService,
+                                ICacheManager cacheManager,
+                                IUpdateMediaInfo mediaInfoUpdater,
+                                ICustomFormatCalculationService formatCalculator,
++                               ITagRepository tagRepository,
+                                Logger logger)
+         {
+             _namingConfigService = namingConfigService;
+             _qualityDefinitionService = qualityDefinitionService;
+             _mediaInfoUpdater = mediaInfoUpdater;
+             _formatCalculator = formatCalculator;
++            _tagRepository = tagRepository;
+             _episodeFormatCache = cacheManager.GetCache<EpisodeFormat[]>(GetType(), "episodeFormat");
+             _absoluteEpisodeFormatCache = cacheManager.GetCache<AbsoluteEpisodeFormat[]>(GetType(), "absoluteEpisodeFormat");
+             _requiresEpisodeTitleCache = cacheManager.GetCache<bool>(GetType(), "requiresEpisodeTitle");
+@@ -138,7 +142,7 @@ private string BuildFileName(List<Episode> episodes, Series series, EpisodeFile
+                 namingConfig = _namingConfigService.GetConfig();
+             }
+ 
+-            if (!namingConfig.RenameEpisodes)
++            if (!GetRenameEpisodes(series, namingConfig.RenameEpisodes))
+             {
+                 return GetOriginalTitle(episodeFile, true) + extension;
+             }
+@@ -398,7 +402,7 @@ public bool RequiresEpisodeTitle(Series series, List<Episode> episodes)
+             var namingConfig = _namingConfigService.GetConfig();
+             var pattern = namingConfig.StandardEpisodeFormat;
+ 
+-            if (!namingConfig.RenameEpisodes)
++            if (!GetRenameEpisodes(series, namingConfig.RenameEpisodes))
+             {
+                 return false;
+             }
+@@ -1228,6 +1232,18 @@ private int GetMaxLengthFromFormatter(string formatter)
+ 
+             return maxCustomLength;
+         }
++
++        private bool GetRenameEpisodes(Series series, bool systemRenameEpisodes)
++        {
++            if (series != null && series.Tags.Any())
++            {
++                var renameTag = _tagRepository.FindByLabel("rename");
++
++                return renameTag != null && series.Tags.Any(tagId => tagId == renameTag.Id);
++            }
++
++            return systemRenameEpisodes;
++        }
+     }
+ 
+     internal sealed class TokenMatch
