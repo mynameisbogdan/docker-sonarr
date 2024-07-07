@@ -1,5 +1,5 @@
 diff --git a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
-index 714605a994..c487b4f7ce 100644
+index 714605a994..777dbf55b9 100644
 --- a/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
 +++ b/src/NzbDrone.Core/Organizer/FileNameBuilder.cs
 @@ -16,6 +16,7 @@
@@ -51,7 +51,7 @@ index 714605a994..c487b4f7ce 100644
              {
                  return false;
              }
-@@ -1228,6 +1232,18 @@ private int GetMaxLengthFromFormatter(string formatter)
+@@ -1228,6 +1232,21 @@ private int GetMaxLengthFromFormatter(string formatter)
  
              return maxCustomLength;
          }
@@ -62,7 +62,10 @@ index 714605a994..c487b4f7ce 100644
 +            {
 +                var renameTag = _tagRepository.FindByLabel("rename");
 +
-+                return renameTag != null && series.Tags.Any(tagId => tagId == renameTag.Id);
++                if (renameTag != null && series.Tags.Any(tagId => tagId == renameTag.Id))
++                {
++                    return true;
++                }
 +            }
 +
 +            return systemRenameEpisodes;
