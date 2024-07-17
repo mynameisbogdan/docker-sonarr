@@ -1,5 +1,5 @@
 diff --git a/src/NzbDrone.Core/Update/UpdatePackageProvider.cs b/src/NzbDrone.Core/Update/UpdatePackageProvider.cs
-index b0015d48de..708131e034 100644
+index 02bff9c4ab..708131e034 100644
 --- a/src/NzbDrone.Core/Update/UpdatePackageProvider.cs
 +++ b/src/NzbDrone.Core/Update/UpdatePackageProvider.cs
 @@ -1,11 +1,5 @@
@@ -14,7 +14,7 @@ index b0015d48de..708131e034 100644
  
  namespace NzbDrone.Core.Update
  {
-@@ -17,74 +11,14 @@ public interface IUpdatePackageProvider
+@@ -17,75 +11,14 @@ public interface IUpdatePackageProvider
  
      public class UpdatePackageProvider : IUpdatePackageProvider
      {
@@ -43,6 +43,7 @@ index b0015d48de..708131e034 100644
 -                                         .AddQueryParam("runtime", "netcore")
 -                                         .AddQueryParam("runtimeVer", _platformInfo.Version)
 -                                         .AddQueryParam("dbType", _mainDatabase.DatabaseType)
+-                                         .AddQueryParam("includeMajorVersion", true)
 -                                         .SetSegment("branch", branch);
 -
 -            if (_analyticsService.IsEnabled)
