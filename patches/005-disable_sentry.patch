@@ -1,8 +1,8 @@
 diff --git a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
-index 750ad659c5..4c28287ab5 100644
+index 9644318816..592a677025 100644
 --- a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
 +++ b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
-@@ -6,7 +6,6 @@
+@@ -7,7 +7,6 @@
  using NLog.Targets;
  using NzbDrone.Common.EnvironmentInfo;
  using NzbDrone.Common.Extensions;
@@ -10,7 +10,7 @@ index 750ad659c5..4c28287ab5 100644
  
  namespace NzbDrone.Common.Instrumentation
  {
-@@ -39,8 +38,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+@@ -44,8 +43,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
                  RegisterDebugger();
              }
  
@@ -19,7 +19,7 @@ index 750ad659c5..4c28287ab5 100644
              if (updateApp)
              {
                  RegisterUpdateFile(appFolderInfo);
-@@ -60,50 +57,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+@@ -65,50 +62,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
              LogManager.ReconfigExistingLoggers();
          }
  
@@ -71,11 +71,11 @@ index 750ad659c5..4c28287ab5 100644
          {
              var target = new DebuggerTarget();
 diff --git a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
-index d4b44eaa66..ff18c4a0bf 100644
+index 1310255fd9..e27f6d10e6 100644
 --- a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
 +++ b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
-@@ -4,10 +4,8 @@
- using NLog.Config;
+@@ -5,10 +5,8 @@
+ using NLog.Targets;
  using NLog.Targets.Syslog;
  using NLog.Targets.Syslog.Settings;
 -using NzbDrone.Common.EnvironmentInfo;
@@ -85,7 +85,7 @@ index d4b44eaa66..ff18c4a0bf 100644
  using NzbDrone.Core.Configuration;
  using NzbDrone.Core.Configuration.Events;
  using NzbDrone.Core.Datastore;
-@@ -62,9 +60,6 @@ public void Reconfigure()
+@@ -64,9 +62,6 @@ public void Reconfigure()
              // Log Sql
              SqlBuilderExtensions.LogSql = _configFileProvider.LogSql;
  
@@ -95,7 +95,7 @@ index d4b44eaa66..ff18c4a0bf 100644
              LogManager.ReconfigExistingLoggers();
          }
  
-@@ -99,16 +94,6 @@ private void SetLogRotation()
+@@ -102,16 +97,6 @@ private void ReconfigureFile()
              }
          }
  
@@ -109,14 +109,14 @@ index d4b44eaa66..ff18c4a0bf 100644
 -            }
 -        }
 -
-         private void SetSyslogParameters(string syslogServer, int syslogPort, LogLevel minimumLogLevel)
+         private void ReconfigureConsole()
          {
-             var syslogTarget = new SyslogTarget();
+             var consoleTarget = LogManager.Configuration.AllTargets.OfType<ColoredConsoleTarget>().FirstOrDefault();
 diff --git a/src/NzbDrone.Host/Startup.cs b/src/NzbDrone.Host/Startup.cs
-index eb18394fca..ed5af83bf0 100644
+index f26a8fcf9b..206e758832 100644
 --- a/src/NzbDrone.Host/Startup.cs
 +++ b/src/NzbDrone.Host/Startup.cs
-@@ -12,7 +12,6 @@
+@@ -13,7 +13,6 @@
  using Microsoft.OpenApi.Models;
  using NLog.Extensions.Logging;
  using NzbDrone.Common.EnvironmentInfo;
@@ -124,7 +124,7 @@ index eb18394fca..ed5af83bf0 100644
  using NzbDrone.Common.Processes;
  using NzbDrone.Common.Serializer;
  using NzbDrone.Core.Configuration;
-@@ -198,7 +197,6 @@ public void ConfigureServices(IServiceCollection services)
+@@ -201,7 +200,6 @@ public void Configure(IApplicationBuilder app,
                                Lazy<ILogDatabase> logDatabaseFactory,
                                DatabaseTarget dbTarget,
                                ISingleInstancePolicy singleInstancePolicy,
@@ -132,7 +132,7 @@ index eb18394fca..ed5af83bf0 100644
                                ReconfigureLogging reconfigureLogging,
                                IAppFolderFactory appFolderFactory,
                                IProvidePidFile pidFileProvider,
-@@ -208,7 +206,6 @@ public void ConfigureServices(IServiceCollection services)
+@@ -211,7 +209,6 @@ public void Configure(IApplicationBuilder app,
                                IEventAggregator eventAggregator,
                                SonarrErrorPipeline errorHandler)
          {
