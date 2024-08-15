@@ -1,11 +1,19 @@
 diff --git a/frontend/src/Components/Page/Header/PageHeader.js b/frontend/src/Components/Page/Header/PageHeader.js
-index 7e06ee1c31..4af62d9a51 100644
+index 2af0520151..dcaff372b9 100644
 --- a/frontend/src/Components/Page/Header/PageHeader.js
 +++ b/frontend/src/Components/Page/Header/PageHeader.js
-@@ -85,14 +85,6 @@ class PageHeader extends Component {
-               null
-           }
+@@ -4,7 +4,6 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
+ import IconButton from 'Components/Link/IconButton';
+ import Link from 'Components/Link/Link';
+ import { icons } from 'Helpers/Props';
+-import translate from 'Utilities/String/translate';
+ import KeyboardShortcutsModal from './KeyboardShortcutsModal';
+ import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+ import SeriesSearchInputConnector from './SeriesSearchInputConnector';
+@@ -75,14 +74,6 @@ class PageHeader extends Component {
+         <SeriesSearchInputConnector />
  
+         <div className={styles.right}>
 -          <IconButton
 -            className={styles.donate}
 -            name={icons.HEART}
@@ -18,7 +26,7 @@ index 7e06ee1c31..4af62d9a51 100644
              onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}
            />
 diff --git a/frontend/src/System/Status/Status.tsx b/frontend/src/System/Status/Status.tsx
-index ae1636b3e0..0e0c6a8d4a 100644
+index 74fdf25d8a..56a261da15 100644
 --- a/frontend/src/System/Status/Status.tsx
 +++ b/frontend/src/System/Status/Status.tsx
 @@ -5,7 +5,6 @@ import translate from 'Utilities/String/translate';
@@ -27,13 +35,13 @@ index ae1636b3e0..0e0c6a8d4a 100644
  import Health from './Health/Health';
 -import MoreInfo from './MoreInfo/MoreInfo';
  
- class Status extends Component {
-   //
-@@ -18,7 +17,6 @@ class Status extends Component {
-           <Health />
-           <DiskSpace />
-           <About />
--          <MoreInfo />
-         </PageContentBody>
-       </PageContent>
-     );
+ function Status() {
+   return (
+@@ -14,7 +13,6 @@ function Status() {
+         <Health />
+         <DiskSpace />
+         <About />
+-        <MoreInfo />
+       </PageContentBody>
+     </PageContent>
+   );
