@@ -1,5 +1,5 @@
 diff --git a/frontend/src/Components/Page/Header/PageHeader.js b/frontend/src/Components/Page/Header/PageHeader.js
-index 2af0520151..dcaff372b9 100644
+index 7d77488b7f..3b1bb09b04 100644
 --- a/frontend/src/Components/Page/Header/PageHeader.js
 +++ b/frontend/src/Components/Page/Header/PageHeader.js
 @@ -4,7 +4,6 @@ import keyboardShortcuts, { shortcuts } from 'Components/keyboardShortcuts';
@@ -8,9 +8,9 @@ index 2af0520151..dcaff372b9 100644
  import { icons } from 'Helpers/Props';
 -import translate from 'Utilities/String/translate';
  import KeyboardShortcutsModal from './KeyboardShortcutsModal';
- import PageHeaderActionsMenuConnector from './PageHeaderActionsMenuConnector';
+ import PageHeaderActionsMenu from './PageHeaderActionsMenu';
  import SeriesSearchInputConnector from './SeriesSearchInputConnector';
-@@ -75,14 +74,6 @@ class PageHeader extends Component {
+@@ -75,15 +74,6 @@ class PageHeader extends Component {
          <SeriesSearchInputConnector />
  
          <div className={styles.right}>
@@ -22,7 +22,8 @@ index 2af0520151..dcaff372b9 100644
 -            size={14}
 -            title={translate('Donate')}
 -          />
-           <PageHeaderActionsMenuConnector
+-
+           <PageHeaderActionsMenu
              onKeyboardShortcutsPress={this.onOpenKeyboardShortcutsModal}
            />
 diff --git a/frontend/src/System/Status/Status.tsx b/frontend/src/System/Status/Status.tsx
