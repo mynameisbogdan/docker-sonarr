@@ -43,7 +43,7 @@ jobs:
       FORCE_COLOR: 0
       NO_COLOR: 1
       DOTNET_CLI_TELEMETRY_OPTOUT: true
-      DOTNET_VERSION: 8.0.400
+      DOTNET_VERSION: 8.0.401
       BRANCH: develop # used in UpdateVersionNumber
       BRANCH_TO_BUILD: ${{ inputs.branch || 'build' }}
       RAW_BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
