@@ -76,9 +76,9 @@ jobs:
             exit 2
           fi
 
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
 
-      - uses: actions/checkout@v4.2.1
+      - uses: actions/checkout@v4.2.2
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ env.BRANCH_TO_BUILD }}
@@ -99,11 +99,11 @@ jobs:
           git apply --stat --apply ../patches/010-series_rename_tag.patch
           git apply --stat --apply ../patches/011-anime_webdl_release_group_exceptions.patch
 
-      - uses: actions/setup-node@v4.0.4
+      - uses: actions/setup-node@v4.1.0
         with:
           node-version: '20.x'
 
-      - uses: actions/setup-dotnet@v4.0.1
+      - uses: actions/setup-dotnet@v4.1.0
         with:
           global-json-file: build/global.json
           
