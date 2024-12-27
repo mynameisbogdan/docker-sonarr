@@ -103,7 +103,7 @@ jobs:
         with:
           node-version: '20.x'
 
-      - uses: actions/setup-dotnet@v4.1.0
+      - uses: actions/setup-dotnet@v4.2.0
         with:
           global-json-file: build/global.json
           
