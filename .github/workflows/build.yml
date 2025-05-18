@@ -105,7 +105,7 @@ jobs:
 
       - uses: actions/setup-dotnet@v4.3.1
         with:
-          global-json-file: build/global.json
+          dotnet-version: '8.0.x'
           
       - working-directory: build
         run: dotnet --info
