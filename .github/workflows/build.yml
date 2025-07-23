@@ -127,6 +127,7 @@ jobs:
           labels: |
             org.opencontainers.image.authors=${{ github.repository_owner }}
             org.opencontainers.image.vendor=${{ github.repository_owner }}
+            build_version=${{ env.SONARR_VERSION }}
           tags: |
             type=raw,value=${{ env.BRANCH }}-${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
             type=raw,value=${{ env.SONARR_VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}

@@ -1,39 +1,44 @@
 # syntax=docker/dockerfile:1
 
-FROM ghcr.io/linuxserver/baseimage-alpine:3.22
+FROM docker.io/library/alpine:3.22
 
-# set version label
 ARG VERSION
-ARG SONARR_BRANCH="develop"
 
-LABEL build_version=$VERSION
-LABEL maintainer="nobody"
+ENV DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+  DOTNET_EnableDiagnostics=0 \
+  SONARR__UPDATE__BRANCH=develop
 
-# environment settings
-ENV XDG_CONFIG_HOME="/config/xdg"
-ENV DOTNET_CLI_TELEMETRY_OPTOUT=true
+USER root
+WORKDIR /app
 
-COPY build/_artifacts/linux-musl-x64/net8.0/Sonarr/ /app/sonarr/bin
+COPY --chown=0:0 --chmod=755 \
+  build/_artifacts/linux-musl-x64/net8.0/Sonarr/ /app/sonarr/bin
 
 RUN set -eux && \
   echo "**** install packages ****" && \
   apk add -U --upgrade --no-cache \
+    bash \
+    ca-certificates \
+    catatonit \
     icu-libs \
     sqlite-libs \
-    xmlstarlet && \
+    tzdata \
+    gnu-libiconv \
+    file && \
   echo "**** install sonarr ****" && \
   mkdir -p /app/sonarr/bin && \
-  echo -e "UpdateMethod=docker\nBranch=${SONARR_BRANCH}\nPackageVersion=${VERSION}" > /app/sonarr/package_info && \
-  printf "Custom version: ${VERSION}" > /build_version && \
+  echo -e "UpdateMethod=docker\nBranch=${SONARR__UPDATE__BRANCH}\nPackageVersion=${VERSION}" > /app/sonarr/package_info && \
   echo "**** cleanup ****" && \
   rm -rf \
     /app/sonarr/bin/Sonarr.Update \
     /tmp/*
 
-# copy local files
 COPY root/ /
 
-# ports and volumes
+USER nobody:nogroup
+WORKDIR /config
+VOLUME ["/config"]
+
 EXPOSE 8989
 
-VOLUME /config
+ENTRYPOINT ["/usr/bin/catatonit", "--", "/entrypoint.sh"]
