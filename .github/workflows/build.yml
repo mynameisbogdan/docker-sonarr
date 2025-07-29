@@ -56,7 +56,7 @@ jobs:
       - name: Retrieving external version
         id: ext_release
         run: |
-          EXT_RELEASE=$(curl -sL "https://services.sonarr.tv/v1/releases" | jq -r '[.[] | select(.releaseChannel=="v4-nightly" or .releaseChannel=="v4-stable") | .version] | sort | reverse | first')
+          EXT_RELEASE=$(curl -sL "https://services.sonarr.tv/v1/releases" | jq -r 'first(.[] | select(.branch=="develop") | .version)')
           if [ -z "${EXT_RELEASE}" ] || [ "${EXT_RELEASE}" == "null" ]; then
             echo "**** Can't retrieve external version, exiting ****"
             echo "Can't retrieve external version, exiting" >> $GITHUB_STEP_SUMMARY
