@@ -9,7 +9,7 @@ on:
       - ".github/workflows/registry-cleanup.yml"
 
 concurrency:
-  group: registry-cleanup-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -17,6 +17,33 @@ jobs:
     name: Delete old unused container images
     runs-on: ubuntu-latest
     steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.5.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch multi-platform package version SHAs
+        id: multi-arch-digests
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          shas=""
+          while read tag; do
+            docker_manifest=$(docker manifest inspect ghcr.io/${{ github.repository_owner }}/sonarr:${tag} 2>&1 || true)
+            # If the image does not exist or an error happens
+            if ! jq '.' <<<"${docker_manifest}" > /dev/null 2>&1; then
+              echo "${tag}: ${docker_manifest}"
+              continue
+            fi
+            # Only collect the shas of multi-arch images
+            if [[ $(jq -r '.manifests | length' <<<"${docker_manifest}") -gt 0 ]]; then
+              shas="${shas}$(jq -r '.manifests[] | .digest' <<<"${docker_manifest}" | paste -s -d ' ' -) "
+            fi
+          done<<<$(gh api '/users/${{ github.repository_owner }}/packages/container/sonarr/versions?per_page=100' --jq '.[] | .metadata.container.tags[] | select(. == "latest" or . == "develop" or . == "nightly" or startswith("nightly-") or startswith("pr-"))')
+          echo "multi-arch-digests=${shas}" >> $GITHUB_OUTPUT
+
       - name: Delete old images
         uses: snok/container-retention-policy@v3.0.0
         with:
@@ -25,5 +52,6 @@ jobs:
           image-names: sonarr
           image-tags: "!latest !develop !nightly"
           cut-off: 1d
-          keep-n-most-recent: 3
+          keep-n-most-recent: 2
           timestamp-to-use: updated_at
+          skip-shas: ${{ steps.multi-arch-digests.outputs.multi-arch-digests }}
