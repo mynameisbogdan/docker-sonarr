@@ -51,7 +51,7 @@ jobs:
           token: ${{ secrets.GHCR_PAT }}
           image-names: sonarr
           image-tags: "!latest !develop !nightly"
-          cut-off: 1d
-          keep-n-most-recent: 2
+          cut-off: 1w
+          keep-n-most-recent: 5
           timestamp-to-use: updated_at
           skip-shas: ${{ steps.multi-arch-digests.outputs.multi-arch-digests }}
