@@ -10,4 +10,7 @@ updates:
     groups:
       github:
         patterns:
-          - "*"
+          - "actions/*"
+      docker:
+        patterns:
+          - "docker/*"
