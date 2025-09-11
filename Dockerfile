@@ -20,6 +20,7 @@ RUN set -eux && \
     bash \
     ca-certificates \
     catatonit \
+    curl \
     icu-libs \
     sqlite-libs \
     tzdata \
