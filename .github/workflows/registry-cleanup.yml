@@ -45,7 +45,7 @@ jobs:
           echo "multi-arch-digests=${shas}" >> $GITHUB_OUTPUT
 
       - name: Delete old images
-        uses: snok/container-retention-policy@v3.0.0
+        uses: snok/container-retention-policy@v3.0.1
         with:
           account: user
           token: ${{ secrets.GHCR_PAT }}
