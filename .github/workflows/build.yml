@@ -85,13 +85,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ needs.prepare.outputs.build_branch }}
 
       - name: Setup node
-        uses: actions/setup-node@v5.0.0
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 20
           cache: yarn
@@ -109,7 +109,7 @@ jobs:
         run: yarn build --env production
 
       - name: Publish UI Artifact
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: build_ui
           path: _output/UI/**/*
@@ -134,10 +134,10 @@ jobs:
           echo "SONARR_VERSION=${{ needs.prepare.outputs.version }}" >> "$GITHUB_ENV"
 
       - name: Check out
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Check out source code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ needs.prepare.outputs.build_branch }}
@@ -155,7 +155,7 @@ jobs:
           git apply --stat --apply ../patches/007-anime_webdl_release_group_exceptions.patch
 
       - name: Setup dotnet
-        uses: actions/setup-dotnet@v5.0.0
+        uses: actions/setup-dotnet@d4c94342e560b34958eacfc5d055d21461ed1c5d # v5.0.0
         with:
           dotnet-version: '8.0.x'
 
@@ -170,7 +170,7 @@ jobs:
           ./build.sh --backend -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: build-${{ matrix.runtime }}
           path: |
@@ -192,7 +192,7 @@ jobs:
           - linux-musl-x64
     steps:
       - name: Check out source code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
           repository: ${{ github.repository_owner }}/Sonarr
           ref: ${{ needs.prepare.outputs.build_branch }}
@@ -202,13 +202,13 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download Artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: build-${{ matrix.runtime }}
           path: _output
 
       - name: Download UI Artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           name: build_ui
           path: _output/UI
@@ -221,7 +221,7 @@ jobs:
           find _artifacts -name "ffprobe" -exec chmod a+x {} \;
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: package-${{ matrix.runtime }}
           path: _artifacts/**/*
@@ -244,10 +244,10 @@ jobs:
           echo "SEMVER=${{ needs.prepare.outputs.semantic_version }}" >> "$GITHUB_ENV"
 
       - name: Check out
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
       - name: Download package artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5
         with:
           pattern: package-*
           path: packages
@@ -255,7 +255,7 @@ jobs:
 
       - name: Docker meta
         id: docker_meta
-        uses: docker/metadata-action@v5.8.0
+        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
         with:
           images: |
             ghcr.io/${{ github.repository_owner }}/sonarr
@@ -272,21 +272,21 @@ jobs:
             type=ref,event=pr
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3.11.1
+        uses: docker/setup-buildx-action@e468171a9de216ec08956ac3ada2f0791b6bd435 # v3.11.1
         with:
           platforms: |
             linux/arm64
             linux/amd64
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3.6.0
+        uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v6.18.0
+        uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
           context: .
           push: true
