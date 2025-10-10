@@ -19,6 +19,11 @@
       description: "GitHub Actions Group",
       groupName: "github-actions",
       matchManagers: ["github-actions"],
+      matchPackageNames: [
+        "/^actions\//",
+        "/^github\//",
+        "/^docker\//",
+      ],
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
