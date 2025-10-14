@@ -127,8 +127,8 @@ System.Windows.Extensions                                    4.7.0              
 alpine-baselayout                                            3.7.0-r0             apk                      
 alpine-baselayout-data                                       3.7.0-r0             apk                      
 alpine-keys                                                  2.5-r0               apk                      
-alpine-release                                               3.22.1-r0            apk                      
-apk-tools                                                    2.14.9-r2            apk                      
+alpine-release                                               3.22.2-r0            apk                      
+apk-tools                                                    2.14.9-r3            apk                      
 bash                                                         5.2.37-r0            apk                      
 brotli-libs                                                  1.1.0-r2             apk                      
 busybox                                                      1.37.0-r19           apk                      
@@ -143,7 +143,7 @@ gnu-libiconv                                                 1.17-r2            
 gnu-libiconv-libs                                            1.17-r2              apk                      
 icu-data-en                                                  76.1-r1              apk                      
 icu-libs                                                     76.1-r1              apk                      
-libapk2                                                      2.14.9-r2            apk                      
+libapk2                                                      2.14.9-r3            apk                      
 libcrypto3                                                   3.5.4-r0             apk                      
 libcurl                                                      8.14.1-r2            apk                      
 libgcc                                                       14.2.0-r6            apk                      
