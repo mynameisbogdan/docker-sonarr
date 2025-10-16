@@ -248,8 +248,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    outputs:
-      image_tag: ${{ steps.docker_meta.outputs.version }}
     steps:
       - name: Setup environment variables
         run: |
@@ -313,30 +311,3 @@ jobs:
           build-args: |
             VERSION=${{ env.VERSION }}-${{ env.BRANCH }}-r${{ github.run_number }}
             FRAMEWORK=${{ needs.prepare.outputs.framework }}
-
-  versions:
-    needs: docker
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    if: github.event_name != 'pull_request'
-    steps:
-      - name: Check out
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-
-      - name: Update package versions
-        uses: docker://ghcr.io/anchore/syft:v1.34.2
-        with:
-          args: ghcr.io/${{ github.repository_owner }}/sonarr:${{ needs.docker.outputs.image_tag }} -o table=package_versions.txt
-
-      - name: Commit changes
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add package_versions.txt
-          if git diff --staged --quiet; then
-            echo "No changes since last run"
-          else
-            git commit -m "Updating Package Versions"
-            git push
-          fi
