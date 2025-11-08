@@ -5,12 +5,14 @@ on:
       - "Build Docker Image"
     types:
       - "completed"
+    branches:
+      - "develop"
   pull_request:
     paths:
       - ".github/workflows/versions.yml"
   push:
     branches:
-      - develop
+      - "develop"
     paths:
       - ".github/workflows/versions.yml"
 
