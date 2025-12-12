@@ -24,7 +24,6 @@ RUN set -eux && \
     catatonit \
     curl \
     icu-libs \
-    sqlite-libs \
     tzdata \
     gnu-libiconv \
     file && \
