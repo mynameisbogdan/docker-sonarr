@@ -3,6 +3,7 @@
   extends: [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
+    ":automergeBranch",
     ":disableRateLimiting",
     ":semanticCommits"
   ],
@@ -21,12 +22,19 @@
       matchManagers: ["github-actions"],
       matchPackageNames: [
         "/^actions\//",
-        "/^github\//",
-        "/^docker\//",
       ],
       group: {
         commitMessageTopic: "{{{groupName}}} group",
       },
+    },
+    {
+      description: "Auto-merge GitHub Actions",
+      matchManagers: ["github-actions"],
+      automerge: true,
+      automergeType: "branch",
+      matchUpdateTypes: ["minor", "patch", "digest"],
+      minimumReleaseAge: "3 days",
+      ignoreTests: false,
     },
     {
       description: "Auto-merge trusted GitHub Actions",
@@ -35,7 +43,7 @@
         "/^actions\//",
       ],
       automerge: true,
-      automergeType: "pr",
+      automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
       minimumReleaseAge: "1 minute",
       ignoreTests: false,
@@ -83,6 +91,10 @@
     {
       matchUpdateTypes: ["patch"],
       labels: ["type/patch"],
+    },
+    {
+      matchUpdateTypes: ["digest"],
+      labels: ["type/digest"],
     },
     {
       matchDatasources: ["docker"],
