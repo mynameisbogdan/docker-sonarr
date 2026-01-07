@@ -1,15 +1,15 @@
-diff --git a/frontend/src/Store/Actions/seriesIndexActions.js b/frontend/src/Store/Actions/seriesIndexActions.js
-index 65c20870f8..dc4566b3a2 100644
---- a/frontend/src/Store/Actions/seriesIndexActions.js
-+++ b/frontend/src/Store/Actions/seriesIndexActions.js
-@@ -19,8 +19,8 @@ export const section = 'seriesIndex';
- export const defaultState = {
-   sortKey: 'sortTitle',
-   sortDirection: sortDirections.ASCENDING,
--  secondarySortKey: 'sortTitle',
--  secondarySortDirection: sortDirections.ASCENDING,
-+  secondarySortKey: 'added',
-+  secondarySortDirection: sortDirections.DESCENDING,
-   view: 'posters',
- 
-   posterOptions: {
+diff --git a/frontend/src/Series/useSeries.ts b/frontend/src/Series/useSeries.ts
+index 63497121dd..f1a1e567b4 100644
+--- a/frontend/src/Series/useSeries.ts
++++ b/frontend/src/Series/useSeries.ts
+@@ -589,8 +589,8 @@ export const useSeriesIndex = () => {
+       customFilters,
+       sortKey: sortKey as keyof Series,
+       sortDirection,
+-      secondarySortKey: 'sortTitle',
+-      secondarySortDirection: 'ascending',
++      secondarySortKey: 'added',
++      secondarySortDirection: 'descending',
+       sortPredicates: SORT_PREDICATES,
+     });
+   }, [customFilters, seriesData, selectedFilterKey, sortKey, sortDirection]);

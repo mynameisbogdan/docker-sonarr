@@ -1,8 +1,8 @@
 diff --git a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
-index 9644318816..592a677025 100644
+index b5187e4082..7cb63f790f 100644
 --- a/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
 +++ b/src/NzbDrone.Common/Instrumentation/NzbDroneLogger.cs
-@@ -7,7 +7,6 @@
+@@ -6,7 +6,6 @@
  using NLog.Targets;
  using NzbDrone.Common.EnvironmentInfo;
  using NzbDrone.Common.Extensions;
@@ -10,7 +10,7 @@ index 9644318816..592a677025 100644
  
  namespace NzbDrone.Common.Instrumentation
  {
-@@ -44,8 +43,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+@@ -45,8 +44,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
                  RegisterDebugger();
              }
  
@@ -19,7 +19,7 @@ index 9644318816..592a677025 100644
              if (updateApp)
              {
                  RegisterUpdateFile(appFolderInfo);
-@@ -65,50 +62,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
+@@ -66,50 +63,6 @@ public static void Register(IStartupContext startupContext, bool updateApp, bool
              LogManager.ReconfigExistingLoggers();
          }
  
@@ -71,7 +71,7 @@ index 9644318816..592a677025 100644
          {
              var target = new DebuggerTarget();
 diff --git a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
-index 1310255fd9..e27f6d10e6 100644
+index d49bb06d76..59fb0b00be 100644
 --- a/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
 +++ b/src/NzbDrone.Core/Instrumentation/ReconfigureLogging.cs
 @@ -5,10 +5,8 @@
@@ -113,18 +113,18 @@ index 1310255fd9..e27f6d10e6 100644
          {
              var consoleTarget = LogManager.Configuration.AllTargets.OfType<ColoredConsoleTarget>().FirstOrDefault();
 diff --git a/src/NzbDrone.Host/Startup.cs b/src/NzbDrone.Host/Startup.cs
-index f26a8fcf9b..206e758832 100644
+index 85b1bb55e1..baeb6c090f 100644
 --- a/src/NzbDrone.Host/Startup.cs
 +++ b/src/NzbDrone.Host/Startup.cs
-@@ -13,7 +13,6 @@
- using Microsoft.OpenApi.Models;
+@@ -17,7 +17,6 @@
+ using Microsoft.OpenApi;
  using NLog.Extensions.Logging;
  using NzbDrone.Common.EnvironmentInfo;
 -using NzbDrone.Common.Instrumentation;
  using NzbDrone.Common.Processes;
  using NzbDrone.Common.Serializer;
  using NzbDrone.Core.Configuration;
-@@ -201,7 +200,6 @@ public void Configure(IApplicationBuilder app,
+@@ -286,7 +285,6 @@ public void Configure(IApplicationBuilder app,
                                Lazy<ILogDatabase> logDatabaseFactory,
                                DatabaseTarget dbTarget,
                                ISingleInstancePolicy singleInstancePolicy,
@@ -132,7 +132,7 @@ index f26a8fcf9b..206e758832 100644
                                ReconfigureLogging reconfigureLogging,
                                IAppFolderFactory appFolderFactory,
                                IProvidePidFile pidFileProvider,
-@@ -211,7 +209,6 @@ public void Configure(IApplicationBuilder app,
+@@ -296,7 +294,6 @@ public void Configure(IApplicationBuilder app,
                                IEventAggregator eventAggregator,
                                SonarrErrorPipeline errorHandler)
          {
