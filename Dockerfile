@@ -24,6 +24,7 @@ RUN set -eux && \
     catatonit \
     curl \
     icu-libs \
+    jq \
     tzdata \
     gnu-libiconv \
     file && \
