@@ -127,7 +127,7 @@ jobs:
         run: yarn build --env production
 
       - name: Publish UI Artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: build_ui
           path: build/_output/UI/**/*
@@ -182,7 +182,7 @@ jobs:
           ./build.sh --backend -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: build-${{ matrix.runtime }}
           path: |
@@ -214,13 +214,13 @@ jobs:
           sparse-checkout-cone-mode: false
 
       - name: Download Artifact
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: build-${{ matrix.runtime }}
           path: _output
 
       - name: Download UI Artifact
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           name: build_ui
           path: _output/UI
@@ -234,7 +234,7 @@ jobs:
           find _artifacts -name "ffprobe" -exec chmod a+x {} \;
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: package-${{ matrix.runtime }}
           path: _artifacts/**/*
@@ -260,7 +260,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Download package artifacts
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3 # v8.0.0
         with:
           pattern: package-*
           path: packages
