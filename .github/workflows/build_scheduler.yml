@@ -2,19 +2,19 @@ name: 'Build Docker Image Scheduler'
 
 on:
   schedule:
-    - cron:  '5 20 * * *'
+    - cron: '16 16 * * 5'
   workflow_dispatch:
 
 permissions:
   actions: write
 
 concurrency:
-  group: build-trigger-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
-  build-scheduler:
-    runs-on: ubuntu-latest
+  scheduler:
+    runs-on: ubuntu-slim
     steps:
       - name: Build Scheduler
         if: github.repository_owner == 'mynameisbogdan' && github.ref == 'refs/heads/develop'
