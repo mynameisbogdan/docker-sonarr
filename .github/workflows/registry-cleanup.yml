@@ -18,7 +18,16 @@ jobs:
   clean-ghcr:
     name: Delete old unused container images
     runs-on: ubuntu-latest
+    permissions:
+      packages: write
     steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Fetch multi-platform package version SHAs
         id: multi-arch-digests
         env:
