@@ -1,8 +1,8 @@
 diff --git a/src/NzbDrone.Core/HealthCheck/Checks/SystemTimeCheck.cs b/src/NzbDrone.Core/HealthCheck/Checks/SystemTimeCheck.cs
-index 10498b831..f10df6c23 100644
+index 278ed7f801..f10df6c23b 100644
 --- a/src/NzbDrone.Core/HealthCheck/Checks/SystemTimeCheck.cs
 +++ b/src/NzbDrone.Core/HealthCheck/Checks/SystemTimeCheck.cs
-@@ -1,50 +1,17 @@
+@@ -1,54 +1,17 @@
  using System;
 -using NLog;
 -using NzbDrone.Common.Cloud;
@@ -43,7 +43,11 @@ index 10498b831..f10df6c23 100644
 -                if (Math.Abs(result.DateTimeUtc.Subtract(systemTime).TotalDays) >= 1)
 -                {
 -                    _logger.Error("System time mismatch. SystemTime: {0} Expected Time: {1}. Update system time", systemTime, result.DateTimeUtc);
--                    return new HealthCheck(GetType(), HealthCheckResult.Error, _localizationService.GetLocalizedString("SystemTimeHealthCheckMessage"), "#system-time-off");
+-                    return new HealthCheck(GetType(),
+-                        HealthCheckResult.Error,
+-                        HealthCheckReason.SystemTime,
+-                        _localizationService.GetLocalizedString("SystemTimeHealthCheckMessage"),
+-                        "#system-time-off");
 -                }
 -            }
 -            catch (Exception e)
