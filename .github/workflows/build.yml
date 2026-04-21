@@ -7,7 +7,7 @@ on:
         description: 'Branch to build'
         required: true
         type: string
-        default: 'build'
+        default: 'v5-build'
   schedule:
     - cron: '0 12 1 * *'
   pull_request:
@@ -26,11 +26,11 @@ on:
       - "Dockerfile"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'build' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'v5-build' }}
   cancel-in-progress: true
 
 env:
-  FRAMEWORK: net8.0
+  FRAMEWORK: net10.0
 
 jobs:
   prepare:
@@ -48,7 +48,7 @@ jobs:
         id: variables
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          BUILD_BRANCH: ${{ inputs.branch || 'build' }}
+          BUILD_BRANCH: ${{ inputs.branch || 'v5-build' }}
         run: |
           BRANCH=${BRANCH_NAME,,}
 
@@ -112,7 +112,7 @@ jobs:
 
       - name: Yarn Install
         working-directory: build
-        run: yarn install --frozen-lockfile
+        run: yarn install --frozen-lockfile --network-timeout 120000
 
       - name: Lint
         working-directory: build
@@ -124,7 +124,7 @@ jobs:
 
       - name: Build
         working-directory: build
-        run: yarn build --env production
+        run: yarn run build --env production
 
       - name: Publish UI Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -169,7 +169,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@c2fa09f4bde5ebb9d1777cf28262a3eb3db3ced7 # v5.2.0
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - working-directory: build
         run: dotnet --info
@@ -179,7 +179,7 @@ jobs:
         env:
           BRANCH: develop
         run: |
-          ./build.sh --backend -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
+          ../build.sh --backend -f ${{ needs.prepare.outputs.framework }} -r ${{ matrix.runtime }}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -203,15 +203,8 @@ jobs:
           - linux-musl-arm64
           - linux-musl-x64
     steps:
-      - name: Check out source code
+      - name: Check out
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          repository: ${{ github.repository_owner }}/Sonarr
-          ref: ${{ needs.prepare.outputs.build_branch }}
-          sparse-checkout: |
-            /build.sh
-            /LICENSE*
-          sparse-checkout-cone-mode: false
 
       - name: Download Artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

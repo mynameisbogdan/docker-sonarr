@@ -1,13 +1,13 @@
 diff --git a/src/NzbDrone.Core/Parser/QualityParser.cs b/src/NzbDrone.Core/Parser/QualityParser.cs
-index 575727297f..638d795f9a 100644
+index f28938dedf..1a6ebeba32 100644
 --- a/src/NzbDrone.Core/Parser/QualityParser.cs
 +++ b/src/NzbDrone.Core/Parser/QualityParser.cs
 @@ -59,7 +59,7 @@ public class QualityParser
-         private static readonly Regex OtherSourceRegex = new (@"(?<hdtv>HD[-_. ]TV)|(?<sdtv>SD[-_. ]TV)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+         private static readonly Regex OtherSourceRegex = new(@"(?<hdtv>HD[-_. ]TV)|(?<sdtv>SD[-_. ]TV)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
  
-         private static readonly Regex AnimeBlurayRegex = new (@"bd(?:720|1080|2160)|(?<=[-_. (\[])bd(?=[-_. )\]])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
--        private static readonly Regex AnimeWebDlRegex = new (@"\[WEB\]|[\[\(]WEB[ .]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-+        private static readonly Regex AnimeWebDlRegex = new (@"\[WEB\]|[\[\(]WEB[ .]|^\[(?:SubsPlease)\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+         private static readonly Regex AnimeBlurayRegex = new(@"bd(?:720|1080|2160)|(?<=[-_. (\[])bd(?=[-_. )\]])", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+-        private static readonly Regex AnimeWebDlRegex = new(@"\[WEB\]|[\[\(]WEB[ .]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
++        private static readonly Regex AnimeWebDlRegex = new(@"\[WEB\]|[\[\(]WEB[ .]|^\[(?:SubsPlease)\]", RegexOptions.Compiled | RegexOptions.IgnoreCase);
  
-         private static readonly Regex HighDefPdtvRegex = new (@"hr[-_. ]ws", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+         private static readonly Regex HighDefPdtvRegex = new(@"hr[-_. ]ws", RegexOptions.Compiled | RegexOptions.IgnoreCase);
  

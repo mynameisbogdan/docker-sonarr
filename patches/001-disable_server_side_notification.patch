@@ -1,8 +1,8 @@
 diff --git a/src/NzbDrone.Core/HealthCheck/ServerSideNotificationService.cs b/src/NzbDrone.Core/HealthCheck/ServerSideNotificationService.cs
-index f0739917f3..40692149ea 100644
+index d249adac28..40692149ea 100644
 --- a/src/NzbDrone.Core/HealthCheck/ServerSideNotificationService.cs
 +++ b/src/NzbDrone.Core/HealthCheck/ServerSideNotificationService.cs
-@@ -1,68 +1,17 @@
+@@ -1,72 +1,17 @@
 -using System;
 -using System.Collections.Generic;
 -using System.Linq;
@@ -51,7 +51,11 @@ index f0739917f3..40692149ea 100644
 -                var response = _client.Execute(request);
 -                var result = Json.Deserialize<List<ServerNotificationResponse>>(response.Content);
 -
--                var checks = result.Select(x => new HealthCheck(GetType(), x.Type, x.Message, x.WikiUrl)).ToList();
+-                var checks = result.Select(x => new HealthCheck(GetType(),
+-                    x.Type,
+-                    HealthCheckReason.ServerNotification,
+-                    x.Message,
+-                    x.WikiUrl)).ToList();
 -
 -                // Only one health check is supported, services returns an ordered list, so use the first one
 -                return checks.FirstOrDefault() ?? new HealthCheck(GetType());
