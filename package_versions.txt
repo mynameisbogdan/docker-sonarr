@@ -142,8 +142,8 @@ nghttp2-libs                                                 1.68.0-r0          
 nghttp3                                                      1.13.1-r0            apk                      
 oniguruma                                                    6.9.10-r0            apk                      
 readline                                                     8.3.1-r0             apk                      
-runtimepack.Microsoft.AspNetCore.App.Runtime.linux-musl-x64  10.0.6               dotnet  (+6 duplicates)  
-runtimepack.Microsoft.NETCore.App.Runtime.linux-musl-x64     10.0.6               dotnet  (+9 duplicates)  
+runtimepack.Microsoft.AspNetCore.App.Runtime.linux-musl-x64  10.0.7               dotnet  (+6 duplicates)  
+runtimepack.Microsoft.NETCore.App.Runtime.linux-musl-x64     10.0.7               dotnet  (+9 duplicates)  
 scanelf                                                      1.3.8-r2             apk                      
 ssl_client                                                   1.37.0-r30           apk                      
 tzdata                                                       2026a-r0             apk                      
