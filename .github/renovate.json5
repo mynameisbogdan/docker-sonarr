@@ -30,6 +30,9 @@
     {
       description: "Auto-merge GitHub Actions",
       matchManagers: ["github-actions"],
+      matchPackageNames: [
+        "!/^ghcr\.io\//",
+      ],
       automerge: true,
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
