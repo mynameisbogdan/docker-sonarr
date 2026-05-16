@@ -3,6 +3,7 @@
   extends: [
     "config:recommended",
     "helpers:pinGitHubActionDigests",
+    "docker:pinDigests",
     ":automergeBranch",
     ":disableRateLimiting",
     ":semanticCommits"
@@ -107,5 +108,8 @@
       matchManagers: ["github-actions"],
       addLabels: ["renovate/github-action"],
     },
-  ]
+  ],
+  registryAliases: {
+    "mirror.gcr.io": "docker.io",
+  },
 }

@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM docker.io/library/alpine:3.23
+FROM mirror.gcr.io/alpine:3.23.4
 
 ARG TARGETARCH
 ARG VERSION
