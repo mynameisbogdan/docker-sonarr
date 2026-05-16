@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Update package versions
-        uses: docker://ghcr.io/anchore/syft:v1.44.0
+        uses: docker://ghcr.io/anchore/syft:v1.44.0@sha256:86fde6445b483d902fe011dd9f68c4987dd94e07da1e9edc004e3c2422650de6
         with:
           args: ghcr.io/${{ github.repository_owner }}/sonarr:develop -o table=package_versions.txt
 
