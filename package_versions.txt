@@ -1,6 +1,6 @@
 NAME                                                         VERSION              TYPE                     
 BouncyCastle.Cryptography                                    2.6.2                dotnet  (+6 duplicates)  
-Dapper                                                       2.1.72               dotnet  (+6 duplicates)  
+Dapper                                                       2.1.79               dotnet  (+6 duplicates)  
 Diacritical.Net                                              1.0.5                dotnet  (+8 duplicates)  
 DryIoc.Microsoft.DependencyInjection                         6.2.0                dotnet  (+1 duplicate)   
 DryIoc.dll                                                   5.4.3                dotnet  (+8 duplicates)  
