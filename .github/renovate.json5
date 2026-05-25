@@ -29,6 +29,17 @@
       },
     },
     {
+      description: "Docker Actions Group",
+      groupName: "docker-actions",
+      matchManagers: ["github-actions"],
+      matchPackageNames: [
+        "/^docker\//",
+      ],
+      group: {
+        commitMessageTopic: "{{{groupName}}} group",
+      },
+    },
+    {
       description: "Auto-merge GitHub Actions",
       matchManagers: ["github-actions"],
       matchPackageNames: [
