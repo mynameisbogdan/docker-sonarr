@@ -125,14 +125,14 @@ icu-data-en                                                  78.1-r0            
 icu-libs                                                     78.1-r0              apk                      
 jq                                                           1.8.1-r0             apk                      
 libapk                                                       3.0.6-r0             apk                      
-libcrypto3                                                   3.5.6-r0             apk                      
+libcrypto3                                                   3.5.7-r0             apk                      
 libcurl                                                      8.20.0-r1            apk                      
 libgcc                                                       15.2.0-r5            apk                      
 libidn2                                                      2.3.8-r0             apk                      
 libmagic                                                     5.47-r2              apk                      
 libncursesw                                                  6.6_p20260516-r0     apk                      
 libpsl                                                       0.21.5-r3            apk                      
-libssl3                                                      3.5.6-r0             apk                      
+libssl3                                                      3.5.7-r0             apk                      
 libstdc++                                                    15.2.0-r5            apk                      
 libunistring                                                 1.4.2-r0             apk                      
 musl                                                         1.2.6-r2             apk                      
