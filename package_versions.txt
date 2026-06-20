@@ -75,7 +75,7 @@ Newtonsoft.Json                                              13.0.4             
 NodaTime                                                     3.2.2                dotnet  (+3 duplicates)  
 Npgsql                                                       10.0.3               dotnet  (+6 duplicates)  
 Openur.FFMpegCore                                            5.4.0.37             dotnet  (+6 duplicates)  
-Openur.FFprobeStatic                                         8.1.2.357            dotnet  (+6 duplicates)  
+Openur.FFprobeStatic                                         8.1.2.364            dotnet  (+6 duplicates)  
 Polly                                                        8.7.0                dotnet  (+6 duplicates)  
 Polly.Contrib.WaitAndRetry                                   1.1.1                dotnet  (+8 duplicates)  
 Polly.Core                                                   8.7.0                dotnet  (+6 duplicates)  
@@ -94,9 +94,9 @@ Sonarr.Mono                                                  1.0.0              
 Sonarr.RuntimePatches                                        1.0.0                dotnet                   
 Sonarr.SignalR                                               1.0.0                dotnet                   
 SourceGear.sqlite3                                           3.50.4.5             dotnet  (+8 duplicates)  
-Swashbuckle.AspNetCore.Annotations                           10.2.1               dotnet  (+3 duplicates)  
-Swashbuckle.AspNetCore.Swagger                               10.2.1               dotnet  (+3 duplicates)  
-Swashbuckle.AspNetCore.SwaggerGen                            10.2.1               dotnet  (+3 duplicates)  
+Swashbuckle.AspNetCore.Annotations                           10.2.2               dotnet  (+3 duplicates)  
+Swashbuckle.AspNetCore.Swagger                               10.2.2               dotnet  (+3 duplicates)  
+Swashbuckle.AspNetCore.SwaggerGen                            10.2.2               dotnet  (+3 duplicates)  
 System.Configuration.ConfigurationManager                    10.0.9               dotnet  (+8 duplicates)  
 System.Data.SQLite                                           2.0.3                dotnet  (+8 duplicates)  
 System.Diagnostics.EventLog                                  10.0.9               dotnet  (+1 duplicate)   
