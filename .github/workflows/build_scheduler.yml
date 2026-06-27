@@ -46,9 +46,8 @@ jobs:
           else
             image_info=$(echo $image_info | jq -r '.container_config')
           fi
-          IMAGE_RELEASE=$(echo ${image_info} | jq -r '.Labels.build_version')
-          IMAGE_VERSION=$(echo ${IMAGE_RELEASE} | awk -F'-develop' '{print $1}')
-          if [ -z "${IMAGE_VERSION}" ]; then
+          IMAGE_VERSION=$(echo ${image_info} | jq -r '.Labels."org.opencontainers.image.version"')
+          if [ -z "${IMAGE_VERSION}" ] || [ "${IMAGE_VERSION}" == "null" ]; then
             echo "**** Can't retrieve last pushed version, exiting ****"
             echo "Can't retrieve last pushed version, exiting" >> $GITHUB_STEP_SUMMARY
             exit 1
