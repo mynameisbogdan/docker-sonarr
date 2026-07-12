@@ -99,6 +99,7 @@ jobs:
           path: build
 
       - name: Apply patches
+        if: ${{ needs.prepare.outputs.build_branch == 'v5-build' }}
         working-directory: build
         run: |
           git apply --stat --apply ../patches/*.patch
@@ -162,6 +163,7 @@ jobs:
           path: build
 
       - name: Apply patches
+        if: ${{ needs.prepare.outputs.build_branch == 'v5-build' }}
         working-directory: build
         run: |
           git apply --stat --apply ../patches/*.patch
