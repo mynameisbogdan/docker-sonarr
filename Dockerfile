@@ -25,6 +25,7 @@ RUN set -eux && \
     curl \
     icu-libs \
     jq \
+    krb5-libs \
     tzdata \
     gnu-libiconv \
     file && \
