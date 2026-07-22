@@ -39,7 +39,7 @@ jobs:
           account: user
           token: ${{ secrets.GITHUB_TOKEN }}
           image-names: sonarr
-          image-tags: "!latest !develop !nightly !pr-*"
+          image-tags: "!latest !develop !nightly !pr-* !branch-v5-develop !branch-v5-redesign"
           cut-off: 1w
           keep-n-most-recent: 5
           timestamp-to-use: updated_at
