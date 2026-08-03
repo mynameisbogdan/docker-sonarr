@@ -75,7 +75,7 @@ NodaTime                                                     3.2.2             d
 Npgsql                                                       10.0.3            dotnet  (+6 duplicates)  
 Openur.FFMpegCore                                            5.4.0.37          dotnet  (+6 duplicates)  
 Openur.FFprobeStatic                                         8.1.2.397         dotnet  (+6 duplicates)  
-Openur.Mono.Unix                                             7.1.0.250         dotnet                   
+Openur.Mono.Unix                                             7.1.0.253         dotnet                   
 Polly                                                        8.7.0             dotnet  (+6 duplicates)  
 Polly.Contrib.WaitAndRetry                                   1.1.1             dotnet  (+8 duplicates)  
 Polly.Core                                                   8.7.0             dotnet  (+6 duplicates)  
