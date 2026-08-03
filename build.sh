@@ -136,9 +136,9 @@ PackageLinux()
 
     echo "Adding Sonarr.Mono to UpdatePackage"
     cp $folder/Sonarr.Mono.* $folder/Sonarr.Update
-    if [ "$framework" = "$framework" ]; then
-        cp $folder/Mono.Posix.NETStandard.* $folder/Sonarr.Update
-        cp $folder/libMonoPosixHelper.* $folder/Sonarr.Update
+    if [ "$framework" = "net10.0" ]; then
+        cp $folder/Openur.Mono.Unix.* $folder/Sonarr.Update
+        cp $folder/libMono.Unix.* $folder/Sonarr.Update
     fi
 
     ProgressEnd "Creating $runtime Package for $framework"
@@ -164,9 +164,9 @@ PackageMacOS()
 
     echo "Adding Sonarr.Mono to UpdatePackage"
     cp $folder/Sonarr.Mono.* $folder/Sonarr.Update
-    if [ "$framework" = "$framework" ]; then
-        cp $folder/Mono.Posix.NETStandard.* $folder/Sonarr.Update
-        cp $folder/libMonoPosixHelper.* $folder/Sonarr.Update
+    if [ "$framework" = "net10.0" ]; then
+        cp $folder/Openur.Mono.Unix.* $folder/Radarr.Update
+        cp $folder/libMono.Unix.* $folder/Radarr.Update
     fi
 
     ProgressEnd "Creating $runtime Package for $framework"
@@ -209,8 +209,8 @@ PackageWindows()
 
     echo "Removing Sonarr.Mono"
     rm -f $folder/Sonarr.Mono.*
-    rm -f $folder/Mono.Posix.NETStandard.*
-    rm -f $folder/libMonoPosixHelper.*
+    rm -f $folder/Openur.Mono.Unix.*
+    rm -f $folder/libMono.Unix.*
 
     echo "Adding Sonarr.Windows to UpdatePackage"
     cp $folder/Sonarr.Windows.* $folder/Sonarr.Update
