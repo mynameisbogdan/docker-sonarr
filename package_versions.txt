@@ -93,7 +93,7 @@ Sonarr.Http                                                  1.0.0             d
 Sonarr.Mono                                                  1.0.0             dotnet                   
 Sonarr.RuntimePatches                                        1.0.0             dotnet                   
 Sonarr.SignalR                                               1.0.0             dotnet                   
-SourceGear.sqlite3                                           3.53.3            dotnet  (+8 duplicates)  
+SourceGear.sqlite3                                           3.53.4            dotnet  (+8 duplicates)  
 Swashbuckle.AspNetCore.Annotations                           10.2.3            dotnet  (+3 duplicates)  
 Swashbuckle.AspNetCore.Swagger                               10.2.3            dotnet  (+3 duplicates)  
 Swashbuckle.AspNetCore.SwaggerGen                            10.2.3            dotnet  (+3 duplicates)  
