@@ -74,7 +74,7 @@ Newtonsoft.Json                                              13.0.4            d
 NodaTime                                                     3.2.2             dotnet  (+3 duplicates)  
 Npgsql                                                       10.0.3            dotnet  (+6 duplicates)  
 Openur.FFMpegCore                                            5.4.0.37          dotnet  (+6 duplicates)  
-Openur.FFprobeStatic                                         9.0.0.408         dotnet  (+6 duplicates)  
+Openur.FFprobeStatic                                         9.0.0.458         dotnet  (+6 duplicates)  
 Openur.Mono.Unix                                             7.1.0.256         dotnet                   
 Polly                                                        8.7.0             dotnet  (+6 duplicates)  
 Polly.Contrib.WaitAndRetry                                   1.1.1             dotnet  (+8 duplicates)  
@@ -98,7 +98,7 @@ Swashbuckle.AspNetCore.Annotations                           10.2.3            d
 Swashbuckle.AspNetCore.Swagger                               10.2.3            dotnet  (+3 duplicates)  
 Swashbuckle.AspNetCore.SwaggerGen                            10.2.3            dotnet  (+3 duplicates)  
 System.Configuration.ConfigurationManager                    10.0.10           dotnet  (+8 duplicates)  
-System.Data.SQLite                                           2.0.3             dotnet  (+8 duplicates)  
+System.Data.SQLite                                           2.0.4             dotnet  (+8 duplicates)  
 System.Diagnostics.EventLog                                  10.0.10           dotnet  (+1 duplicate)   
 System.Drawing.Common                                        10.0.10           dotnet  (+6 duplicates)  
 System.IdentityModel.Tokens.Jwt                              8.16.0            dotnet  (+6 duplicates)  
