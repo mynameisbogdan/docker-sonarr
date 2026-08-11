@@ -115,17 +115,18 @@ jobs:
         working-directory: build
         run: yarn install --frozen-lockfile --network-timeout 120000
 
-      - name: Lint
-        working-directory: build
-        run: yarn lint
+      - parallel:
+        - name: Lint
+          working-directory: build
+          run: yarn lint
 
-      - name: Stylelint
-        working-directory: build
-        run: yarn stylelint -f github
+        - name: Stylelint
+          working-directory: build
+          run: yarn stylelint -f github
 
-      - name: Build
-        working-directory: build
-        run: yarn run build --env production
+        - name: Build
+          working-directory: build
+          run: yarn run build --env production
 
       - name: Publish UI Artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
