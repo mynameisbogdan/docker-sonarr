@@ -169,6 +169,14 @@ jobs:
         run: |
           git apply --stat --apply ../patches/*.patch
 
+      - name: Cache nuget packages
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json', 'src/**/*.csproj', 'src/**/Directory.*.props') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
       - name: Setup dotnet
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
         with:
