@@ -16,7 +16,7 @@ FluentValidation                                             9.5.4             d
 IPAddressRange                                               6.3.0             dotnet  (+8 duplicates)  
 Ical.Net                                                     5.2.3             dotnet  (+3 duplicates)  
 ImpromptuInterface                                           8.0.6             dotnet  (+4 duplicates)  
-Instances                                                    3.0.2             dotnet  (+6 duplicates)  
+Instances                                                    3.1.0             dotnet  (+6 duplicates)  
 Lib.Harmony                                                  2.4.2             dotnet  (+1 duplicate)   
 MailKit                                                      4.18.0            dotnet  (+6 duplicates)  
 Microsoft.AspNetCore.Authentication.OpenIdConnect            10.0.12           dotnet  (+4 duplicates)  
@@ -56,7 +56,6 @@ Microsoft.IdentityModel.Protocols                            8.19.2            d
 Microsoft.IdentityModel.Protocols.OpenIdConnect              8.19.2            dotnet  (+4 duplicates)  
 Microsoft.IdentityModel.Tokens                               8.19.2            dotnet  (+4 duplicates)  
 Microsoft.OpenApi                                            2.7.5             dotnet  (+3 duplicates)  
-Microsoft.Win32.SystemEvents                                 10.0.12           dotnet  (+6 duplicates)  
 MimeKit                                                      4.18.0            dotnet  (+6 duplicates)  
 MiniProfiler.AspNetCore                                      4.5.4             dotnet  (+6 duplicates)  
 MiniProfiler.AspNetCore.Mvc                                  4.5.4             dotnet  (+1 duplicate)   
@@ -70,7 +69,7 @@ NLog.Targets.Syslog                                          7.0.0             d
 Newtonsoft.Json                                              13.0.4            dotnet  (+8 duplicates)  
 NodaTime                                                     3.2.2             dotnet  (+3 duplicates)  
 Npgsql                                                       10.0.3            dotnet  (+6 duplicates)  
-Openur.FFMpegCore                                            5.4.0.37          dotnet  (+6 duplicates)  
+Openur.FFMpegCore                                            5.5.0.45          dotnet  (+6 duplicates)  
 Openur.FFprobeStatic                                         9.0.2.508         dotnet  (+6 duplicates)  
 Openur.Mono.Unix                                             7.1.0.256         dotnet                   
 Polly                                                        8.8.0             dotnet  (+6 duplicates)  
@@ -96,7 +95,6 @@ Swashbuckle.AspNetCore.Swagger                               10.2.3            d
 Swashbuckle.AspNetCore.SwaggerGen                            10.2.3            dotnet  (+3 duplicates)  
 System.Data.SQLite                                           2.0.4             dotnet  (+8 duplicates)  
 System.Diagnostics.EventLog                                  10.0.12           dotnet  (+1 duplicate)   
-System.Drawing.Common                                        10.0.12           dotnet  (+6 duplicates)  
 System.IdentityModel.Tokens.Jwt                              8.19.2            dotnet  (+4 duplicates)  
 System.ServiceProcess.ServiceController                      10.0.12           dotnet  (+8 duplicates)  
 alpine-baselayout                                            3.7.2-r1          apk                      
