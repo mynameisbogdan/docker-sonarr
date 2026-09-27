@@ -9,6 +9,7 @@
     ":semanticCommits"
   ],
   dependencyDashboardTitle: "Renovate Dashboard",
+  minimumReleaseAgeBehaviour: "timestamp-optional",
   schedule: [
     "* * * * *"
   ],
@@ -42,9 +43,6 @@
     {
       description: "Auto-merge GitHub Actions",
       matchManagers: ["github-actions"],
-      matchPackageNames: [
-        "!/^ghcr\.io\//",
-      ],
       automerge: true,
       automergeType: "branch",
       matchUpdateTypes: ["minor", "patch", "digest"],
