@@ -41,5 +41,5 @@ jobs:
           image-names: sonarr
           image-tags: "!latest !develop !nightly !pr-*"
           cut-off: 1w
-          keep-n-most-recent: 5
+          keep-n-most-recent: 3
           timestamp-to-use: updated_at
