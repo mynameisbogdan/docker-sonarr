@@ -34,7 +34,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     if: ${{ !github.event.pull_request.head.repo.fork }}
     outputs:
       framework: ${{ steps.variables.outputs.framework }}
@@ -82,7 +82,7 @@ jobs:
 
   frontend:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Check out
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -137,7 +137,7 @@ jobs:
 
   backend:
     needs: prepare
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -206,7 +206,7 @@ jobs:
       - prepare
       - frontend
       - backend
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -248,7 +248,7 @@ jobs:
     needs:
       - prepare
       - package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       packages: write
