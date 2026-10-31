@@ -7,7 +7,7 @@ on:
         description: 'Branch to build'
         required: true
         type: string
-        default: 'v5-build'
+        default: 'build'
   schedule:
     - cron: '0 12 1 * *'
   pull_request:
@@ -26,7 +26,7 @@ on:
       - "Dockerfile"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'v5-build' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.branch || 'build' }}
   cancel-in-progress: true
 
 env:
@@ -48,7 +48,7 @@ jobs:
         id: variables
         env:
           BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
-          BUILD_BRANCH: ${{ inputs.branch || 'v5-build' }}
+          BUILD_BRANCH: ${{ inputs.branch || 'build' }}
         run: |
           BRANCH=${BRANCH_NAME,,}
 
@@ -99,7 +99,7 @@ jobs:
           path: build
 
       - name: Apply patches
-        if: ${{ needs.prepare.outputs.build_branch == 'v5-build' }}
+        if: ${{ needs.prepare.outputs.build_branch == 'build' }}
         working-directory: build
         run: |
           git apply --stat --apply ../patches/*.patch
@@ -168,7 +168,7 @@ jobs:
           path: build
 
       - name: Apply patches
-        if: ${{ needs.prepare.outputs.build_branch == 'v5-build' }}
+        if: ${{ needs.prepare.outputs.build_branch == 'build' }}
         working-directory: build
         run: |
           git apply --stat --apply ../patches/*.patch
@@ -286,13 +286,13 @@ jobs:
             org.opencontainers.image.url=https://ghcr.io/${{ github.repository_owner }}/sonarr
             org.opencontainers.image.source=https://github.com/${{ github.repository_owner }}/Sonarr
           tags: |
-            type=raw,value=${{ env.BRANCH }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'v5-build' }}
-            type=raw,value=${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'v5-build' }}
-            type=raw,value=${{ env.BRANCH }}-${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'v5-build' }}
-            type=raw,value=${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'v5-build' }}
-            type=raw,value=${{ env.BRANCH }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD == 'v5-build' }}
-            type=raw,value=${{ needs.prepare.outputs.tag_branch }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'v5-build' }}
-            type=raw,value=branch-${{ needs.prepare.outputs.tag_branch }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'v5-build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }}-${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name != 'master' && github.ref_name != 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.SEMVER }},enable=${{ github.event_name != 'pull_request' && (github.ref_name == 'master' || github.ref_name == 'main') && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ env.BRANCH }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD == 'build' }}
+            type=raw,value=${{ needs.prepare.outputs.tag_branch }}-${{ env.VERSION }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
+            type=raw,value=branch-${{ needs.prepare.outputs.tag_branch }},enable=${{ github.event_name != 'pull_request' && env.BRANCH_TO_BUILD != 'build' }}
             type=ref,event=pr
 
       - name: Set up QEMU
