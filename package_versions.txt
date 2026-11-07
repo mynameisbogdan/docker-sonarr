@@ -69,7 +69,7 @@ NLog.Targets.Syslog                                          7.0.0             d
 Newtonsoft.Json                                              13.0.4            dotnet  (+8 duplicates)  
 NodaTime                                                     3.2.2             dotnet  (+3 duplicates)  
 Npgsql                                                       10.0.3            dotnet  (+6 duplicates)  
-Openur.FFMpegCore                                            5.5.0.45          dotnet  (+6 duplicates)  
+Openur.FFMpegCore                                            6.0.0.57          dotnet  (+6 duplicates)  
 Openur.FFprobeStatic                                         9.0.2.508         dotnet  (+6 duplicates)  
 Openur.Mono.Unix                                             7.1.0.256         dotnet                   
 Polly                                                        8.9.0             dotnet  (+6 duplicates)  
@@ -144,5 +144,5 @@ runtimepack.Microsoft.NETCore.App.Runtime.linux-musl-x64     10.0.14           d
 scanelf                                                      1.3.9-r1          apk                      
 ssl_client                                                   1.37.0-r31        apk                      
 tzdata                                                       2026f-r0          apk                      
-zlib                                                         1.3.2-r1          apk                      
+zlib                                                         1.4-r0            apk                      
 zstd-libs                                                    1.5.7-r2          apk                      
