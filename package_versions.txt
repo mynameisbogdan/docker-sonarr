@@ -69,7 +69,7 @@ NLog.Targets.Syslog                                          7.0.0             d
 Newtonsoft.Json                                              13.0.4            dotnet  (+8 duplicates)  
 NodaTime                                                     3.2.2             dotnet  (+3 duplicates)  
 Npgsql                                                       10.0.3            dotnet  (+6 duplicates)  
-Openur.FFMpegCore                                            6.0.0.57          dotnet  (+6 duplicates)  
+Openur.FFMpegCore                                            6.0.0.60          dotnet  (+6 duplicates)  
 Openur.FFprobeStatic                                         9.0.2.508         dotnet  (+6 duplicates)  
 Openur.Mono.Unix                                             7.1.0.256         dotnet                   
 Polly                                                        8.9.0             dotnet  (+6 duplicates)  
