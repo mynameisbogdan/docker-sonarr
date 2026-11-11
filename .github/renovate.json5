@@ -124,7 +124,7 @@
       addLabels: ["renovate/github-action"],
     },
     {
-      matchManagers: ["github-releases"],
+      matchDatasources: ["github-releases"],
       addLabels: ["renovate/github-release"],
     },
   ],
